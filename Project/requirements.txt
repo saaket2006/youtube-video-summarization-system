@@ -4,6 +4,6 @@ python-dotenv
 pytube
 youtube-transcript-api
 openai
-whisper @ git+https://github.com/openai/whisper.git
+openai-whisper
 torch
 groq
