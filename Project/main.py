@@ -27,7 +27,7 @@ st.markdown("Multiple agents collaborate to provide a refined, structured summar
 load_dotenv()
 groq_key = os.getenv("GROQ_API_KEY", "")
 if groq_key:
-    os.environ["GROQ_API_KEY"] = groq_key
+    os.environ["LITELLM_API_KEY"] = os.getenv("GROQ_API_KEY")
 
 
 video_url = st.text_input("Enter a YouTube Video URL:", placeholder="https://www.youtube.com/watch?v=xxxx")
