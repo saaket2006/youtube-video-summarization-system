@@ -1,10 +1,7 @@
 from crewai import Agent
 from crewai.llm import LLM
 
-llm = LLM(
-    provider="groq",
-    model="llama-3.1-8b-instant"
-)
+llm = LLM(model="groq/llama-3.1-8b-instant")
 
 manager = Agent(
     role="Coordinator",
