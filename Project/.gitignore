@@ -227,6 +227,13 @@ data/transcripts/
 data/summaries/
 *.json
 *.txt
+data/
+*.txt
+*.json
+*.mp3
+*.mp4
+*.wav
+
 
 # Streamlit stuff
 .streamlit/
