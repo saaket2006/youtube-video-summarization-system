@@ -1,12 +1,15 @@
 from crewai import Agent
+from crewai.llm import LLM
+
+llm = LLM(
+    provider="groq",
+    model="llama-3.1-8b-instant"
+)
 
 loader = Agent(
     role="Transcript Loader",
     goal="Load transcript if available.",
     backstory="Understands how to fetch YouTube transcripts.",
-    llm={
-        "provider": "groq",
-        "model": "llama-3.1-8b-instant"
-    },
+    llm=llm,
     verbose=True
 )
