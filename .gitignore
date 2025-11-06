@@ -205,3 +205,41 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# --- Project Specific ---
+
+# Audio / Video downloads from pytube / yt-dlp
+*.mp3
+*.mp4
+*.wav
+*.m4a
+*.webm
+downloads/
+data/downloads/
+
+# Whisper transcription temp outputs
+*.srt
+*.vtt
+*.tsv
+
+# Transcript + Summary cache
+data/transcripts/
+data/summaries/
+*.json
+*.txt
+
+# Streamlit stuff
+.streamlit/
+# If user uploads via UI
+uploaded_files/
+
+# Local Whisper model weights (if downloaded manually)
+whisper_models/
+models/
+
+# Logs
+*.log
+
+# MacOS system junk
+.DS_Store
+
