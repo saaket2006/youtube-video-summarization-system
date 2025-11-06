@@ -16,7 +16,9 @@ from utils.chunk_utils import chunk_text
 from utils.transcript_utils import extract_video_id, load_youtube_transcript
 from utils.whisper_utils import transcribe_audio
 
-
+for folder in ["data", "data/downloads", "data/transcripts", "data/summaries"]:
+    os.makedirs(folder, exist_ok=True)
+    
 # ---------------- STREAMLIT UI SETUP ----------------
 st.set_page_config(page_title="YouTube Summarizer AI", page_icon="🎬", layout="wide")
 st.title("🤖 AI YouTube Video Summarizer")
