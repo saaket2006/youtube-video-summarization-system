@@ -1,5 +1,7 @@
 import streamlit as st
 import os
+import time
+import litellm
 from dotenv import load_dotenv
 from crewai import Crew, Task, Process
 
@@ -8,7 +10,7 @@ from crew.manager import manager
 from crew.loader import loader
 from crew.transcriber import transcriber
 from crew.formatter import formatter
-from crew.summarizer import summarizer
+from crew.summarizer import chunk_summarizer, final_summarizer
 from crew.query_agent import query_agent
 
 # ---- Import Utils ----
@@ -18,7 +20,13 @@ from utils.whisper_utils import transcribe_audio
 
 for folder in ["data", "data/downloads", "data/transcripts", "data/summaries"]:
     os.makedirs(folder, exist_ok=True)
-    
+
+
+litellm.RATE_LIMIT_RETRY = True
+litellm.RATE_LIMIT_RETRY_MAX_RETRIES = 5
+litellm.RATE_LIMIT_RETRY_BACKOFF = 2  # exponential
+
+
 # ---------------- STREAMLIT UI SETUP ----------------
 st.set_page_config(page_title="YouTube Summarizer AI", page_icon="🎬", layout="wide")
 st.title("🤖 AI YouTube Video Summarizer")
@@ -77,8 +85,8 @@ if st.button("Generate Summary", type="primary"):
         summary_tasks = [
             Task(
                 description="Summarize this chunk into key structured notes with bullet points.",
-                agent=summarizer,
-                asynchronous=True,
+                agent=chunk_summarizer,
+                asynchronous=False,
                 expected_output="A concise bullet-point style summary of this chunk."
             ) for _ in transcript_chunks
         ]
@@ -86,27 +94,34 @@ if st.button("Generate Summary", type="primary"):
         # Step 4: Merge Summaries into Lecture-Style Notes
         final_summary_task = Task(
             description=(
-                "Combine all chunk summaries into detailed lecture-style study notes.\n\n"
-                "Requirements:\n"
-                "- Follow the logical topic flow of the video.\n"
-                "- Use clear section headers.\n"
-                "- Write full, explanatory sentences.\n"
-                "- Preserve examples, analogies, and reasoning.\n"
-                "- Highlight important terms.\n\n"
+                "Combine all chunk summaries into clear, structured college-level lecture notes.\n\n"
+                "Guidelines:\n"
+                "- Maintain the original flow of ideas in the video.\n"
+                "- Break the content into meaningful logical sections.\n"
+                "- Use paragraphs to explain concepts clearly.\n"
+                "- Use bullet points when listing steps, examples, features, or arguments.\n"
+                "- Preserve examples, analogies, and important reasoning.\n"
+                "- Highlight important terminology or definitions using **bold**.\n\n"
                 "Output Format:\n"
                 "# Title\n"
-                "## 1. Overview (short paragraph)\n"
-                "## 2. Section Title\n"
-                "Explanation paragraphs\n"
-                "- Supporting bullet points\n"
-                "> Highlighted key idea\n\n"
-                "## Final Key Takeaways (5–10 bullets)\n"
-                "## One-Sentence Core Idea Summary\n"
+                "## Overview\n"
+                "Short paragraph introducing the topic and purpose.\n\n"
+                "## Section Title\n"
+                "Paragraph explanation.\n"
+                "- Supporting bullet point\n"
+                "- Supporting bullet point\n\n"
+                "## Next Section Title\n"
+                "(Repeat structure)\n\n"
+                "## Key Takeaways\n"
+                "- 5 to 10 core insights\n\n"
+                "## One-Line Summary\n"
+                "A single sentence that captures the main message."
             ),
-            agent=summarizer,
-            context=summary_tasks,   # ✅ This was previously wrong
-            expected_output="Detailed lecture-style structured notes in Markdown."
+            agent=final_summarizer,
+            context=summary_tasks,
+            expected_output="Structured and detailed lecture-style notes in Markdown."
         )
+
 
         # Step 5: Manager Refines for Clarity & Flow
         refine_task = Task(
@@ -124,7 +139,7 @@ if st.button("Generate Summary", type="primary"):
 
         # ---------------- CREW PIPELINE (Hierarchical + Parallel) ----------------
         crew = Crew(
-            agents=[loader, transcriber, formatter, summarizer, query_agent],
+            agents=[loader, transcriber, formatter, chunk_summarizer, final_summarizer, query_agent],
             tasks=[load_task] + format_tasks + summary_tasks + [final_summary_task, refine_task, qa_task],
             process=Process.hierarchical,
             manager_agent=manager,
