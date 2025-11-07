@@ -3,6 +3,7 @@ crewai
 python-dotenv
 pytube
 youtube-transcript-api
+yt-dlp
 openai
 openai-whisper
 torch
