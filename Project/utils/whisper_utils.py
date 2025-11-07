@@ -4,28 +4,32 @@ import uuid
 import whisper
 
 def transcribe_audio(url):
-    audio_filename = f"audio_{uuid.uuid4().hex}.mp3"
+    # Unique base name for the output file
+    base_name = f"audio_{uuid.uuid4().hex}"
 
-    # Download audio using yt-dlp
+    # yt-dlp command to extract audio in mp3 format
     command = [
         "yt-dlp",
-        "--extract-audio",
+        "-x",
         "--audio-format", "mp3",
-        "-o", audio_filename,
+        "-o", f"{base_name}.%(ext)s",   # ✅ This ensures real filename exists
         url
     ]
 
     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    if result.returncode != 0:
-        print("yt-dlp error output:", result.stderr.decode())
+    # The output file will be something like: audio_<id>.mp3
+    audio_file = f"{base_name}.mp3"
+
+    if result.returncode != 0 or not os.path.exists(audio_file):
+        print("yt-dlp error:", result.stderr.decode())
         raise RuntimeError("Failed to download audio")
 
+    # Load Whisper
     model = whisper.load_model("base")
-    result = model.transcribe(audio_filename)
+    result = model.transcribe(audio_file)
 
-    # Clean up downloaded audio
-    if os.path.exists(audio_filename):
-        os.remove(audio_filename)
+    # Cleanup
+    os.remove(audio_file)
 
     return result["text"]
