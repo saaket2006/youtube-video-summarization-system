@@ -1,5 +1,4 @@
-from youtube_transcript_api import YouTubeTranscriptApi
-from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptFound
+from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 
 def extract_video_id(url):
     if "v=" in url:
@@ -11,6 +10,6 @@ def extract_video_id(url):
 def load_youtube_transcript(video_id):
     try:
         transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])
-        return " ".join([x['text'] for x in transcript])
+        return " ".join([entry['text'] for entry in transcript])
     except (TranscriptsDisabled, NoTranscriptFound):
         return None
