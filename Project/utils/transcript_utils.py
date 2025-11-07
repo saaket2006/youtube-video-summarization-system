@@ -1,4 +1,5 @@
-from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled
+from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptFound
 
 def extract_video_id(url):
     if "v=" in url:
@@ -9,7 +10,15 @@ def extract_video_id(url):
 
 def load_youtube_transcript(video_id):
     try:
-        transcript_data = YouTubeTranscriptApi.get_transcript(video_id)
-        return " ".join([x['text'] for x in transcript_data])
-    except TranscriptsDisabled:
+        # List available transcripts
+        transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+
+        # Prefer English transcript if available
+        transcript = transcript_list.find_transcript(['en'])
+        transcript_data = transcript.fetch()
+
+        return " ".join([entry['text'] for entry in transcript_data])
+
+    except (TranscriptsDisabled, NoTranscriptFound):
+        # Return None so Whisper fallback triggers in main.py
         return None
