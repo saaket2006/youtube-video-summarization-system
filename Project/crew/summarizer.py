@@ -1,12 +1,13 @@
-from crewai import Agent
-from crewai.llm import LLM
-
-llm = LLM(model="groq/llama-3.1-8b-instant")
+from crewai import Agent, LLM
 
 summarizer = Agent(
-    role="Summarizer",
-    goal="Convert cleaned text into structured, meaningful summaries.",
-    backstory="Skilled at extracting key insights.",
-    llm=llm,
-    verbose=True
+    role="Video Summarizer",
+    goal="Produce a clear, structured, section-based summary of the transcript.",
+    backstory=(
+        "You are an expert explainer known for simplifying complex ideas with clarity. "
+        "You create structured summaries with meaningful section headers and bullet points."
+    ),
+    llm=LLM(model="groq/llama-3.1-8b-instant"),
+    verbose=True,
+    memory=True
 )

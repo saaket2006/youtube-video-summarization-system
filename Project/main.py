@@ -80,9 +80,30 @@ if st.button("Generate Summary", type="primary"):
 
         # Merge summaries into one structured final summary
         final_summary_task = Task(
-            description="Merge all chunk summaries into one high-quality, well-structured final summary.",
-            agent=summarizer
+            description=(
+                "You are given a cleaned transcript of a YouTube video. "
+                "Rewrite the content into detailed, structured lecture-style study notes. "
+                "The notes must:\n"
+                "1) Follow the video's topic flow.\n"
+                "2) Be divided into clear, meaningful sections.\n"
+                "3) Explain concepts thoroughly in full sentences.\n"
+                "4) Preserve examples, analogies, and reasoning steps.\n"
+                "5) Highlight important terms.\n\n"
+                "Format to follow:\n\n"
+                "# Title\n"
+                "## 1. Video Overview (short paragraph)\n"
+                "## 2. Section Name\n"
+                "Detailed explanation paragraphs.\n"
+                "- Bullet points for supporting ideas\n"
+                "> Important term or quoted insight\n\n"
+                "## Final Key Takeaways (5–10 bullets)\n"
+                "## One-Sentence Core Message\n"
+            ),
+            agent=summarizer,
+            context=[chunk_summaries],
+            expected_output="Lecture style notes in structured markdown."
         )
+
 
         # Manager refinement
         refine_task = Task(
