@@ -1,11 +1,19 @@
-streamlit
-crewai
-python-dotenv
-pytube
-youtube-transcript-api
-yt-dlp
-openai
+streamlit>=1.33.0
+crewai>=1.3.0
+python-dotenv>=1.0.1
+
+# LLM + API
+groq>=0.6.0
+litellm>=1.34.8
+
+# YouTube transcript & download
+youtube-transcript-api==0.6.2
+git+https://github.com/pytube/pytube
+yt-dlp>=2024.03.10
+
+# Whisper Speech-to-Text
 openai-whisper
-torch
-groq
-litellm
+torch==2.1.2 --index-url https://download.pytorch.org/whl/cpu
+
+# Utilities
+requests

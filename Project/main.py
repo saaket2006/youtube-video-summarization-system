@@ -124,7 +124,7 @@ if st.button("Generate Summary", type="primary"):
 
         # ---------------- CREW PIPELINE (Hierarchical + Parallel) ----------------
         crew = Crew(
-            agents=[manager, loader, transcriber, formatter, summarizer, query_agent],
+            agents=[loader, transcriber, formatter, summarizer, query_agent],
             tasks=[load_task] + format_tasks + summary_tasks + [final_summary_task, refine_task, qa_task],
             process=Process.hierarchical,
             manager_agent=manager,
@@ -132,7 +132,7 @@ if st.button("Generate Summary", type="primary"):
             verbose=True
         )
 
-        result = crew.run()
+        result = crew.kickoff()
 
 
         # ---------------- DISPLAY SUMMARY ----------------
