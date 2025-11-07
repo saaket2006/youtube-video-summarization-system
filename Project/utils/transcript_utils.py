@@ -11,7 +11,6 @@ def extract_video_id(url):
 def load_youtube_transcript(video_id):
     try:
         transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])
-        return " ".join([entry['text'] for entry in transcript])
-
+        return " ".join([x['text'] for x in transcript])
     except (TranscriptsDisabled, NoTranscriptFound):
         return None
