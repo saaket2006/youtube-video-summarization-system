@@ -29,7 +29,7 @@ The tool creates **structured lecture-style study notes**, perfect for:
 
 ## 📦 Running
 
--1-> Put in your API Key in the .env file
+-1-> Put in your API Key in the .env file   
 -2-> Check for API
     -> export $(grep -v '^#' .env | xargs)
     -> echo $GROQ_API_KEY
