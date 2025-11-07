@@ -10,39 +10,43 @@ def extract_video_id(url):
     return None
 
 def load_youtube_transcript(video_id):
-    # Temporary filename
-    subtitle_file = f"sub_{uuid.uuid4().hex}.vtt"
+    # Unique filename
+    base = f"sub_{uuid.uuid4().hex}"
+    subtitle_file = base + ".vtt"
 
+    # yt-dlp command to download auto OR manual English subtitles
     command = [
         "yt-dlp",
         f"https://www.youtube.com/watch?v={video_id}",
         "--skip-download",
-        "--write-auto-sub",        # IMPORTANT: auto-generated captions (solves your issue)
+        "--write-auto-sub",        # ✅ auto captions
+        "--write-sub",             # ✅ uploader captions
         "--sub-lang", "en",
         "--sub-format", "vtt",
-        "-o", subtitle_file
+        "-o", base                 # ✅ important change (no extension here)
     ]
 
-    try:
-        subprocess.run(command, check=True)
-    except subprocess.CalledProcessError:
+    subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    # Now detect *actual* generated file
+    generated_file = None
+    for file in os.listdir("."):
+        if file.startswith(base) and file.endswith(".vtt"):
+            generated_file = file
+            break
+
+    if not generated_file:
         return None
 
-    # Read the VTT file
-    vtt_file = subtitle_file + ".en.vtt"
-    if not os.path.exists(vtt_file):
-        return None
-
-    # Convert VTT → text
-    transcript_text = []
-    with open(vtt_file, "r", encoding="utf-8") as f:
+    # Convert .vtt → text (removing timestamps & formatting)
+    text_lines = []
+    with open(generated_file, "r", encoding="utf-8") as f:
         for line in f:
-            # Skip timecodes and metadata
-            if "-->" in line or line.strip().isdigit() or line.startswith("WEBVTT"):
+            if "-->" in line or line.strip().isdigit() or line.strip() == "" or line.startswith("WEBVTT"):
                 continue
-            clean = line.strip()
-            if clean:
-                transcript_text.append(clean)
+            text_lines.append(line.strip())
 
-    os.remove(vtt_file)
-    return " ".join(transcript_text)
+    # cleanup
+    os.remove(generated_file)
+
+    return " ".join(text_lines)
