@@ -29,13 +29,13 @@ The tool creates **structured lecture-style study notes**, perfect for:
 
 ## 📦 Running
 
---> Put in your API Key in the .env file
---> Check for API
-    export $(grep -v '^#' .env | xargs)
-    echo $GROQ_API_KEY
---> pip install -r requirements.txt
---> sudo apt-get update && sudo apt-get install -y ffmpeg
---> Check for cookies
-    echo "cookies.txt" >> .gitignore
-    git status --ignored --short
---> streamlit run main.py
+-1-> Put in your API Key in the .env file
+-2-> Check for API
+    -> export $(grep -v '^#' .env | xargs)
+    -> echo $GROQ_API_KEY
+-3-> pip install -r requirements.txt
+-4-> sudo apt-get update && sudo apt-get install -y ffmpeg
+-5-> Check for cookies
+    -> echo "cookies.txt" >> .gitignore
+    -> git status --ignored --short
+-6-> streamlit run main.py
