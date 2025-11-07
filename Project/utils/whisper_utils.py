@@ -42,7 +42,7 @@ def transcribe_audio(url):
     if not os.path.exists(audio_file):
         raise RuntimeError("Audio download failed.")
 
-    model = whisper.load_model("base", device="cuda")
+    model = whisper.load_model("base", device = "cpu")
     result = model.transcribe(audio_file)
     os.remove(audio_file)
     return result["text"]

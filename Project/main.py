@@ -55,79 +55,85 @@ if st.button("Generate Summary", type="primary"):
         transcript_chunks = chunk_text(transcript)
 
         # ---------------- TASK DEFINITIONS ----------------
+
+        # Step 1: Validate Transcript Source
         load_task = Task(
-            description=f"Confirm transcript content quality:\n\n{transcript[:2000]}...",
-            agent=manager
+            description="Verify transcript is correctly loaded and ready for processing. Return OK if valid.",
+            agent=manager,
+            expected_output="A confirmation that the transcript is valid and ready."
         )
 
-        # Clean each chunk
+        # Step 2: Clean Each Transcript Chunk (done in parallel)
         format_tasks = [
             Task(
-                description=f"Clean and fix readability of this chunk:\n\n{chunk}",
+                description="Clean this transcript chunk for grammar, readability, and remove filler words.",
                 agent=formatter,
-                asynchronous=True
+                asynchronous=True,
+                expected_output="A cleaned, grammatically improved text chunk."
             ) for chunk in transcript_chunks
         ]
 
-        # Summarize each chunk
+        # Step 3: Summarize Each Cleaned Chunk (done in parallel)
         summary_tasks = [
             Task(
-                description="Summarize this cleaned chunk into key structured points.",
+                description="Summarize this chunk into key structured notes with bullet points.",
                 agent=summarizer,
-                asynchronous=True
+                asynchronous=True,
+                expected_output="A concise bullet-point style summary of this chunk."
             ) for _ in transcript_chunks
         ]
 
-        # Merge summaries into one structured final summary
+        # Step 4: Merge Summaries into Lecture-Style Notes
         final_summary_task = Task(
             description=(
-                "You are given a cleaned transcript of a YouTube video. "
-                "Rewrite the content into detailed, structured lecture-style study notes. "
-                "The notes must:\n"
-                "1) Follow the video's topic flow.\n"
-                "2) Be divided into clear, meaningful sections.\n"
-                "3) Explain concepts thoroughly in full sentences.\n"
-                "4) Preserve examples, analogies, and reasoning steps.\n"
-                "5) Highlight important terms.\n\n"
-                "Format to follow:\n\n"
+                "Combine all chunk summaries into detailed lecture-style study notes.\n\n"
+                "Requirements:\n"
+                "- Follow the logical topic flow of the video.\n"
+                "- Use clear section headers.\n"
+                "- Write full, explanatory sentences.\n"
+                "- Preserve examples, analogies, and reasoning.\n"
+                "- Highlight important terms.\n\n"
+                "Output Format:\n"
                 "# Title\n"
-                "## 1. Video Overview (short paragraph)\n"
-                "## 2. Section Name\n"
-                "Detailed explanation paragraphs.\n"
-                "- Bullet points for supporting ideas\n"
-                "> Important term or quoted insight\n\n"
+                "## 1. Overview (short paragraph)\n"
+                "## 2. Section Title\n"
+                "Explanation paragraphs\n"
+                "- Supporting bullet points\n"
+                "> Highlighted key idea\n\n"
                 "## Final Key Takeaways (5–10 bullets)\n"
-                "## One-Sentence Core Message\n"
+                "## One-Sentence Core Idea Summary\n"
             ),
             agent=summarizer,
-            context=[chunk_summaries],
-            expected_output="Lecture style notes in structured markdown."
+            context=summary_tasks,   # ✅ This was previously wrong
+            expected_output="Detailed lecture-style structured notes in Markdown."
         )
 
-
-        # Manager refinement
+        # Step 5: Manager Refines for Clarity & Flow
         refine_task = Task(
-            description="Review final summary quality and refine if necessary.",
-            agent=manager
+            description="Review the final notes for clarity, remove redundancy, and ensure smooth flow.",
+            agent=manager,
+            expected_output="A polished final version of the lecture-style notes."
         )
 
-        # Q&A agent ready state
+        # Step 6: Prepare Q&A Agent
         qa_task = Task(
-            description="Prepare to answer user questions.",
-            agent=query_agent
+            description="Prepare the content so user questions about the video can be answered accurately.",
+            agent=query_agent,
+            expected_output="A ready-to-answer knowledge representation of the summarized content."
         )
 
         # ---------------- CREW PIPELINE (Hierarchical + Parallel) ----------------
         crew = Crew(
             agents=[manager, loader, transcriber, formatter, summarizer, query_agent],
             tasks=[load_task] + format_tasks + summary_tasks + [final_summary_task, refine_task, qa_task],
-            process=Process.HIERARCHICAL,
+            process=Process.hierarchical,
             manager_agent=manager,
             max_iterations=2,
             verbose=True
         )
 
         result = crew.run()
+
 
         # ---------------- DISPLAY SUMMARY ----------------
         st.subheader("✅ Final Sectional Summary")
