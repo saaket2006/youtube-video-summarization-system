@@ -24,7 +24,7 @@ for folder in ["data", "data/downloads", "data/transcripts", "data/summaries"]:
 
 litellm.RATE_LIMIT_RETRY = True
 litellm.RATE_LIMIT_RETRY_MAX_RETRIES = 5
-litellm.RATE_LIMIT_RETRY_BACKOFF = 10  # exponential
+litellm.RATE_LIMIT_RETRY_BACKOFF = 8  # exponential
 
 
 # ---------------- STREAMLIT UI SETUP ----------------
@@ -74,27 +74,25 @@ if st.button("Generate Summary", type="primary"):
         # Step 2: Clean Each Transcript Chunk (done in parallel)
         format_tasks = [
             Task(
-                description="Clean this transcript chunk for grammar, readability, and remove filler words.",
+                description=f"Clean and fix readability of this chunk:\n\n{chunk}",
                 agent=formatter,
-                asynchronous=True,
-                expected_output="A cleaned, grammatically improved text chunk."
+                asynchronous=True         # ✅ Run all formatting tasks in parallel
             ) for chunk in transcript_chunks
         ]
 
-        # Step 3: Summarize Each Cleaned Chunk (done in parallel)
         summary_tasks = [
             Task(
-                description="Summarize this chunk into key structured notes with bullet points.",
+                description="Summarize this cleaned chunk into key structured notes.",
                 agent=chunk_summarizer,
-                asynchronous=True,
-                expected_output="A concise bullet-point style summary of this chunk."
+                asynchronous=True         # ✅ Run all summarization tasks in parallel
             ) for _ in transcript_chunks
         ]
+
 
         # Step 4: Merge Summaries into Lecture-Style Notes
         final_summary_task = Task(
             description=(
-                "Combine all chunk summaries into clear, structured college-level lecture notes.\n\n"
+                "Combine all chunk summaries into clear, structured and long (not too long) college-level lecture notes.\n\n"
                 "Guidelines:\n"
                 "- Maintain the original flow of ideas in the video.\n"
                 "- Break the content into meaningful logical sections.\n"
@@ -102,7 +100,7 @@ if st.button("Generate Summary", type="primary"):
                 "- Use bullet points when listing steps, examples, features, or arguments.\n"
                 "- Preserve examples, analogies, and important reasoning.\n"
                 "- Highlight important terminology or definitions using **bold**.\n\n"
-                "Output Format:\n"
+                "Output Format (to be referrenced, can change according to the topic):\n"
                 "# Title\n"
                 "## Overview\n"
                 "Short paragraph introducing the topic and purpose.\n\n"

@@ -1,13 +1,15 @@
-from crewai import Agent
-from crewai.llm import LLM
-
-llm = LLM(model="groq/llama-3.1-8b-instant")
+from crewai import Agent, LLM
+from utils.retry_utils import safe_llm_call
+from litellm import SafeDict
 
 manager = Agent(
-    role="Coordinator",
-    goal="Direct the pipeline and ensure summary quality.",
-    backstory="You evaluate outputs and request refinements when needed.",
-    llm=llm,
-    allow_delegation=True,
-    verbose=True
+    role="Manager",
+    goal="Coordinate agents and maintain workflow quality.",
+    backstory="Oversees the summarization pipeline and ensures output quality.",
+    llm=LLM(
+        model="groq/llama-3.1-8b-instant",
+        call=SafeDict(call=safe_llm_call)  # ✅ This overrides the call method
+    ),
+    verbose=False,
+    memory=False
 )

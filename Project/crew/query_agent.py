@@ -1,12 +1,13 @@
-from crewai import Agent
-from crewai.llm import LLM
-
-llm = LLM(model="groq/llama-3.1-8b-instant")
+from crewai import Agent, LLM
+from utils.retry_utils import safe_llm_call
 
 query_agent = Agent(
-    role="Q&A Assistant",
-    goal="Answer user questions based on final summary only.",
-    backstory="Helpful and accurate.",
-    llm=llm,
+    role="Q&A Tutor",
+    goal="Answer follow-up questions based on final notes.",
+    backstory="You are a friendly study assistant who explains clearly.",
+    llm=LLM(
+        model="openai/gpt-4.1-mini",
+        call=safe_llm_call   # ✅
+    ),
     verbose=True
 )
