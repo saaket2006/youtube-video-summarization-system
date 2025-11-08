@@ -24,7 +24,7 @@ for folder in ["data", "data/downloads", "data/transcripts", "data/summaries"]:
 
 litellm.RATE_LIMIT_RETRY = True
 litellm.RATE_LIMIT_RETRY_MAX_RETRIES = 5
-litellm.RATE_LIMIT_RETRY_BACKOFF = 2  # exponential
+litellm.RATE_LIMIT_RETRY_BACKOFF = 10  # exponential
 
 
 # ---------------- STREAMLIT UI SETUP ----------------
@@ -86,7 +86,7 @@ if st.button("Generate Summary", type="primary"):
             Task(
                 description="Summarize this chunk into key structured notes with bullet points.",
                 agent=chunk_summarizer,
-                asynchronous=False,
+                asynchronous=True,
                 expected_output="A concise bullet-point style summary of this chunk."
             ) for _ in transcript_chunks
         ]
@@ -122,14 +122,6 @@ if st.button("Generate Summary", type="primary"):
             expected_output="Structured and detailed lecture-style notes in Markdown."
         )
 
-
-        # Step 5: Manager Refines for Clarity & Flow
-        refine_task = Task(
-            description="Review the final notes for clarity, remove redundancy, and ensure smooth flow.",
-            agent=manager,
-            expected_output="A polished final version of the lecture-style notes."
-        )
-
         # Step 6: Prepare Q&A Agent
         qa_task = Task(
             description="Prepare the content so user questions about the video can be answered accurately.",
@@ -140,7 +132,7 @@ if st.button("Generate Summary", type="primary"):
         # ---------------- CREW PIPELINE (Hierarchical + Parallel) ----------------
         crew = Crew(
             agents=[loader, transcriber, formatter, chunk_summarizer, final_summarizer, query_agent],
-            tasks=[load_task] + format_tasks + summary_tasks + [final_summary_task, refine_task, qa_task],
+            tasks=[load_task] + format_tasks + summary_tasks + [final_summary_task, qa_task],
             process=Process.hierarchical,
             manager_agent=manager,
             max_iterations=2,

@@ -1,4 +1,4 @@
-def chunk_text(text, max_chars=1800):
+def chunk_text(text, max_chars=1000):
     chunks = []
     while len(text) > max_chars:
         split_index = text.rfind('.', 0, max_chars)

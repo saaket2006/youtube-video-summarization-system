@@ -8,8 +8,8 @@ chunk_summarizer = Agent(
         "You provide efficient and concise summaries focused on capturing the key ideas "
         "and main structure of the content. You avoid unnecessary details here."
     ),
-    llm=LLM(model="groq/llama-3.1-3b-preview"),  # ✅ smaller model to avoid rate limits
-    verbose=True,
+    llm=LLM(model="groq/llama-3.1-70b-instant"),  # ✅ smaller model to avoid rate limits
+    verbose=False,
     memory=False
 )
 
