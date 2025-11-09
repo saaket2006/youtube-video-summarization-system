@@ -24,7 +24,7 @@ for folder in ["data", "data/downloads", "data/transcripts", "data/summaries"]:
 
 litellm.RATE_LIMIT_RETRY = True
 litellm.RATE_LIMIT_RETRY_MAX_RETRIES = 5
-litellm.RATE_LIMIT_RETRY_BACKOFF = 8  # exponential
+litellm.RATE_LIMIT_RETRY_BACKOFF = 10  # exponential
 
 
 # ---------------- STREAMLIT UI SETUP ----------------
@@ -76,7 +76,8 @@ if st.button("Generate Summary", type="primary"):
             Task(
                 description=f"Clean and fix readability of this chunk:\n\n{chunk}",
                 agent=formatter,
-                asynchronous=True         # ✅ Run all formatting tasks in parallel
+                asynchronous=True,        # ✅ Run all formatting tasks in parallel
+                expected_output="A cleaned, grammatically correct, readable version of the text."
             ) for chunk in transcript_chunks
         ]
 
@@ -84,7 +85,8 @@ if st.button("Generate Summary", type="primary"):
             Task(
                 description="Summarize this cleaned chunk into key structured notes.",
                 agent=chunk_summarizer,
-                asynchronous=True         # ✅ Run all summarization tasks in parallel
+                asynchronous=True,         # ✅ Run all summarization tasks in parallel
+                expected_output="A concise but meaningful bullet-point style summary of the chunk."
             ) for _ in transcript_chunks
         ]
 
@@ -122,18 +124,30 @@ if st.button("Generate Summary", type="primary"):
 
         # Step 6: Prepare Q&A Agent
         qa_task = Task(
-            description="Prepare the content so user questions about the video can be answered accurately.",
+            description="Prepare the content so user questions about the video or related to the video can be answered accurately.",
             agent=query_agent,
-            expected_output="A ready-to-answer knowledge representation of the summarized content."
+            expected_output="Ready state confirmation and conceptual grounding for Q&A."
         )
+
+        refine_task = Task(
+            description=(
+                "Review the final summary for clarity and structure. "
+                "If it is generally correct and readable, APPROVE IT. "
+                "Do NOT request further refinements unless major errors exist."
+                "Check coherence and structure only. Do not rewrite or expand content."
+            ),
+            agent=manager,
+            expected_output="Approved final summary."
+        )
+
 
         # ---------------- CREW PIPELINE (Hierarchical + Parallel) ----------------
         crew = Crew(
             agents=[loader, transcriber, formatter, chunk_summarizer, final_summarizer, query_agent],
-            tasks=[load_task] + format_tasks + summary_tasks + [final_summary_task, qa_task],
+            tasks=[load_task] + format_tasks + summary_tasks + [final_summary_task, refine_task, qa_task],
             process=Process.hierarchical,
             manager_agent=manager,
-            max_iterations=2,
+            max_iterations=2,   # ← STOP LOOPING
             verbose=True
         )
 

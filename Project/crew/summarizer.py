@@ -1,6 +1,4 @@
 from crewai import Agent, LLM
-from utils.retry_utils import safe_llm_call
-from litellm import SafeDict
 
 # ✅ Faster & Cheaper Summarizer for Chunk Summaries
 chunk_summarizer = Agent(
@@ -11,10 +9,9 @@ chunk_summarizer = Agent(
         "and main structure of the content. You avoid unnecessary details here."
     ),
     llm=LLM(
-        model="groq/llama-3.1-70b-instant",
-        call=safe_llm_call
+        model="groq/llama-3.1-70b-instant"
     ),
-    verbose=False,
+    verbose=True,
     memory=False
 )
 
@@ -24,9 +21,8 @@ final_summarizer = Agent(
     goal="Combine all chunk summaries to create complete, well-structured lecture notes.",
     backstory="A professor-level writer skilled in producing high-quality study material.",
     llm=LLM(
-        model="openai/gpt-4o",
-        call=safe_llm_call
-    ),  # ✅ Best for long structured notes
+        model="gemini/gemini-2.5-flash"
+    ),
     verbose=True,
     memory=False
 )
