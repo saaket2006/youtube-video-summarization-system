@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from crewai import Crew, Task, Process
 
 # ---- Import Agents ----
-from crew.validator import validator
+from crew.validator import validator, validate_summary
 from crew.loader import loader
 from crew.transcriber import transcriber
 from crew.formatter import formatter
@@ -14,7 +14,7 @@ from crew.summarizer import chunk_summarizer, final_summarizer
 from crew.query_agent import query_agent
 
 # ---- Import Utils ----
-from utils.chunk_utils import chunk_text
+from utils.chunk_utils import chunk_text, preview_chunks
 from utils.transcript_utils import extract_video_id, load_youtube_transcript
 from utils.whisper_utils import transcribe_audio
 
@@ -60,23 +60,17 @@ if st.button("Generate Summary", type="primary"):
             transcript = transcribe_audio(video_url)
 
         # Chunk transcript for parallel summarization
-        transcript_chunks = chunk_text(transcript)
+        transcript_chunks = chunk_text(transcript, max_chars=600)
+        preview_chunks(transcript_chunks)
 
         # ---------------- TASK DEFINITIONS ----------------
-
-        # Step 1: Validate Transcript Source
-        load_task = Task(
-            description="Verify transcript is correctly loaded and ready for processing. Return OK if valid.",
-            agent=manager,
-            expected_output="A confirmation that the transcript is valid and ready."
-        )
 
         # Step 2: Clean Each Transcript Chunk (done in parallel)
         format_tasks = [
             Task(
                 description=f"Clean and fix readability of this chunk:\n\n{chunk}",
                 agent=formatter,
-                asynchronous=True,        # ✅ Run all formatting tasks in parallel
+                asynchronous=True,
                 expected_output="A cleaned, grammatically correct, readable version of the text."
             ) for chunk in transcript_chunks
         ]
@@ -85,7 +79,7 @@ if st.button("Generate Summary", type="primary"):
             Task(
                 description="Summarize this cleaned chunk into key structured notes.",
                 agent=chunk_summarizer,
-                asynchronous=True,         # ✅ Run all summarization tasks in parallel
+                asynchronous=True,
                 expected_output="A concise but meaningful bullet-point style summary of the chunk."
             ) for _ in transcript_chunks
         ]
@@ -122,6 +116,29 @@ if st.button("Generate Summary", type="primary"):
             expected_output="Structured and detailed lecture-style notes in Markdown."
         )
 
+        # Step 6: Prepare Q&A Agent
+        qa_task = Task(
+            description="Prepare the content so user questions about the video or related to the video can be answered accurately.",
+            agent=query_agent,
+            expected_output="Ready state confirmation and conceptual grounding for Q&A."
+        )
+
+       # ---------------- CREW PIPELINE ----------------
+        crew = Crew(
+            agents=[loader, transcriber, formatter, chunk_summarizer, final_summarizer, validator, query_agent],
+            tasks=format_tasks + summary_tasks + [final_summary_task, qa_task],
+            process=Process.sequential,
+            max_iterations=1,
+            verbose=True
+        )
+
+        # Run the full pipeline
+        result = crew.kickoff()
+
+        # Extract text output from result (Crew can return dict or str)
+        final_summary_text = str(result)
+
+        # ✅ Define Validator Task AFTER summary is available
         validate_task = Task(
             description=(
                 "Read the final lecture-style notes below. "
@@ -133,40 +150,19 @@ if st.button("Generate Summary", type="primary"):
             expected_output="APPROVED or short improvement suggestions."
         )
 
-        # Step 6: Prepare Q&A Agent
-        qa_task = Task(
-            description="Prepare the content so user questions about the video or related to the video can be answered accurately.",
-            agent=query_agent,
-            expected_output="Ready state confirmation and conceptual grounding for Q&A."
-        )
-
-        refine_task = Task(
-            description=(
-                "Review the final summary for clarity and structure. "
-                "If it is generally correct and readable, APPROVE IT. "
-                "Do NOT request further refinements unless major errors exist."
-                "Check coherence and structure only. Do not rewrite or expand content."
-            ),
-            agent=manager,
-            expected_output="Approved final summary."
-        )
-
-
-        # ---------------- CREW PIPELINE (Hierarchical + Parallel) ----------------
-        crew = Crew(
-            agents=[loader, transcriber, formatter, chunk_summarizer, final_summarizer, validator, query_agent],
-            tasks=format_tasks + summary_tasks + [final_summary_task, validate_task, qa_task],
+        # Execute validator task properly using a temporary Crew
+        validation_crew = Crew(
+            agents=[validator],
+            tasks=[validate_task],
             process=Process.sequential,
-            max_iterations=1,
             verbose=True
         )
 
-        result = crew.kickoff()
+        validation_result = validation_crew.kickoff()
 
-
-        # ---------------- DISPLAY SUMMARY ----------------
+        # ---------------- DISPLAY FINAL SUMMARY ----------------
         st.subheader("✅ Final Sectional Summary")
-        st.write(result)
+        st.write(final_summary_text)
 
         st.divider()
 
@@ -175,5 +171,8 @@ if st.button("Generate Summary", type="primary"):
         user_query = st.text_input("Enter your question here:")
 
         if st.button("Ask"):
-            answer = query_agent.run(user_query)
+            answer = query_agent.run(
+                f"Use the following notes to answer the question.\n\nNOTES:\n{final_summary_text}\n\nQUESTION:\n{user_query}"
+            )
             st.write(answer)
+

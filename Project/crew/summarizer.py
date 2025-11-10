@@ -9,7 +9,8 @@ chunk_summarizer = Agent(
         "and main structure of the content. You avoid unnecessary details here."
     ),
     llm=LLM(
-        model="groq/llama-3.1-70b-instant"
+        model="gemini/gemini-2.0-flash-lite",
+        temperature=0.3
     ),
     verbose=True,
     memory=False
@@ -21,7 +22,8 @@ final_summarizer = Agent(
     goal="Combine all chunk summaries to create complete, well-structured lecture notes.",
     backstory="A professor-level writer skilled in producing high-quality study material.",
     llm=LLM(
-        model="gemini/gemini-2.5-flash"
+        model="gemini/gemini-2.5-flash",
+        temperature=0.35
     ),
     verbose=True,
     memory=False
