@@ -29,7 +29,7 @@ litellm.RATE_LIMIT_RETRY_BACKOFF = 10  # exponential
 
 # ---------------- STREAMLIT UI SETUP ----------------
 st.set_page_config(page_title="YouTube Summarizer AI", page_icon="🎬", layout="wide")
-st.title("🤖 AI YouTube Video Summarizer")
+st.title("🤖 AI-Based YouTube Video Summarizer")
 st.markdown("Multiple agents collaborate to provide a refined, structured summary.")
 
 load_dotenv()
