@@ -3,6 +3,7 @@
 This project is a **YouTube Video Summarization Tool** built using:
 - **CrewAI** (Multi-agent reasoning pipeline)
 - **Groq LLaMA 3** (Fast + high-quality text reasoning)
+- **Gemini LLM Models** (Medium-paced, High tokens per minute)
 - **Whisper Speech-to-Text** (Fallback transcription when transcripts aren't available)
 - **Streamlit** UI
 
