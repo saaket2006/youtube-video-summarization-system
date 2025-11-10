@@ -14,7 +14,7 @@ from crew.summarizer import chunk_summarizer, final_summarizer
 from crew.query_agent import query_agent
 
 # ---- Import Utils ----
-from utils.chunk_utils import chunk_text, preview_chunks
+from utils.chunk_utils import chunk_text, preview_chunks, group_chunks
 from utils.transcript_utils import extract_video_id, load_youtube_transcript
 from utils.whisper_utils import transcribe_audio
 
@@ -60,68 +60,78 @@ if st.button("Generate Summary", type="primary"):
             transcript = transcribe_audio(video_url)
 
         # Chunk transcript for parallel summarization
-        transcript_chunks = chunk_text(transcript, max_chars=600)
-        preview_chunks(transcript_chunks)
+        raw_chunks = chunk_text(transcript, max_chars=3000)
+        #st.info(f"🧩 Transcript split into {len(raw_chunks)} primary chunks.")
+
+        transcript_batches = group_chunks(raw_chunks, batch_size=10)
+        #st.info(f"📦 Grouped into {len(transcript_batches)} batches for summarization.")
+
+        preview_chunks(transcript_batches)
 
         # ---------------- TASK DEFINITIONS ----------------
 
-        # Step 2: Clean Each Transcript Chunk (done in parallel)
         format_tasks = [
             Task(
-                description=f"Clean and fix readability of this chunk:\n\n{chunk}",
+                description=f"Clean and fix readability of this transcript segment:\n\n{batch}",
                 agent=formatter,
-                asynchronous=True,
+                asynchronous=True,  # run all format tasks concurrently
                 expected_output="A cleaned, grammatically correct, readable version of the text."
-            ) for chunk in transcript_chunks
+            )
+            for batch in transcript_batches
         ]
 
+        # ✅ Step 5: Summarize Each Cleaned Batch (also parallelized)
         summary_tasks = [
             Task(
-                description="Summarize this cleaned chunk into key structured notes.",
+                description=(
+                    "Summarize this cleaned transcript batch into key structured notes. "
+                    "Focus on clarity, topic flow, and extracting main ideas.\n\n"
+                    "Return bullet-style notes or short paragraphs for each concept."
+                ),
                 agent=chunk_summarizer,
-                asynchronous=True,
-                expected_output="A concise but meaningful bullet-point style summary of the chunk."
-            ) for _ in transcript_chunks
+                asynchronous=True,  # parallel summarization for speed
+                expected_output="A concise but meaningful bullet-point summary of the batch."
+            )
+            for _ in transcript_batches
         ]
 
-
-        # Step 4: Merge Summaries into Lecture-Style Notes
+        # ✅ Step 6: Combine all summaries into final long-form notes
         final_summary_task = Task(
             description=(
-                "Combine all chunk summaries into clear, structured and long (not too long) college-level lecture notes.\n\n"
+                "Combine all batch-level summaries into well-structured, lecture-style notes.\n\n"
                 "Guidelines:\n"
-                "- Maintain the original flow of ideas in the video.\n"
-                "- Break the content into meaningful logical sections.\n"
-                "- Use paragraphs to explain concepts clearly.\n"
-                "- Use bullet points when listing steps, examples, features, or arguments.\n"
-                "- Preserve examples, analogies, and important reasoning.\n"
-                "- Highlight important terminology or definitions using **bold**.\n\n"
-                "Output Format (to be referrenced, can change according to the topic):\n"
+                "- Maintain original flow and logical order from the video.\n"
+                "- Use headings and subheadings (##) to separate sections.\n"
+                "- Write in a clear, instructional tone.\n"
+                "- Use bullet points for lists, examples, and features.\n"
+                "- Highlight key terms in **bold**.\n\n"
+                "Output Format (example):\n"
                 "# Title\n"
                 "## Overview\n"
-                "Short paragraph introducing the topic and purpose.\n\n"
+                "Short introduction paragraph.\n\n"
                 "## Section Title\n"
-                "Paragraph explanation.\n"
-                "- Supporting bullet point\n"
-                "- Supporting bullet point\n\n"
-                "## Next Section Title\n"
-                "(Repeat structure)\n\n"
+                "- Supporting point\n"
+                "- Example or explanation\n\n"
                 "## Key Takeaways\n"
-                "- 5 to 10 core insights\n\n"
+                "- 5–10 concise bullet points summarizing core ideas\n\n"
                 "## One-Line Summary\n"
-                "A single sentence that captures the main message."
+                "A single sentence capturing the entire video message."
             ),
             agent=final_summarizer,
             context=summary_tasks,
-            expected_output="Structured and detailed lecture-style notes in Markdown."
+            expected_output="Structured, polished lecture-style notes in Markdown format."
         )
 
-        # Step 6: Prepare Q&A Agent
+        # ✅ Step 7: Prepare Q&A readiness
         qa_task = Task(
-            description="Prepare the content so user questions about the video or related to the video can be answered accurately.",
+            description=(
+                "Analyze the final summarized content and prepare it so that "
+                "follow-up questions about the lecture can be answered accurately."
+            ),
             agent=query_agent,
-            expected_output="Ready state confirmation and conceptual grounding for Q&A."
+            expected_output="Confirmation that Q&A context is ready."
         )
+
 
        # ---------------- CREW PIPELINE ----------------
         crew = Crew(
