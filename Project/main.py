@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from crewai import Crew, Task, Process
 
 # ---- Import Agents ----
-from crew.manager import manager
+from crew.validator import validator
 from crew.loader import loader
 from crew.transcriber import transcriber
 from crew.formatter import formatter
@@ -122,6 +122,17 @@ if st.button("Generate Summary", type="primary"):
             expected_output="Structured and detailed lecture-style notes in Markdown."
         )
 
+        validate_task = Task(
+            description=(
+                "Read the final lecture-style notes below. "
+                "If they are complete, coherent, and well-structured, reply exactly: APPROVED. "
+                "Otherwise, give 2-3 short bullet points with improvement suggestions.\n\n"
+                f"{final_summary_text[:4000]}"
+            ),
+            agent=validator,
+            expected_output="APPROVED or short improvement suggestions."
+        )
+
         # Step 6: Prepare Q&A Agent
         qa_task = Task(
             description="Prepare the content so user questions about the video or related to the video can be answered accurately.",
@@ -143,11 +154,10 @@ if st.button("Generate Summary", type="primary"):
 
         # ---------------- CREW PIPELINE (Hierarchical + Parallel) ----------------
         crew = Crew(
-            agents=[loader, transcriber, formatter, chunk_summarizer, final_summarizer, query_agent],
-            tasks=[load_task] + format_tasks + summary_tasks + [final_summary_task, refine_task, qa_task],
-            process=Process.hierarchical,
-            manager_agent=manager,
-            max_iterations=2,   # ← STOP LOOPING
+            agents=[loader, transcriber, formatter, chunk_summarizer, final_summarizer, validator, query_agent],
+            tasks=format_tasks + summary_tasks + [final_summary_task, validate_task, qa_task],
+            process=Process.sequential,
+            max_iterations=1,
             verbose=True
         )
 
