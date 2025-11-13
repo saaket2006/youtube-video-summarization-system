@@ -9,7 +9,7 @@ chunk_summarizer = Agent(
         "and main structure of the content. You avoid unnecessary details here."
     ),
     llm=LLM(
-        model="gemini/gemini-2.0-flash-lite",
+        model="gemini/gemini-2.0-flash",
         temperature=0.3
     ),
     verbose=True,
