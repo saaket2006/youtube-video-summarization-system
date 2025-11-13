@@ -28,7 +28,7 @@ The tool creates **structured lecture-style study notes**, perfect for:
 
 ---
 
-## 📦 Running
+## 📦 How to Run
 
 --> Put in your API Key in the .env file   
 --> Check for API   
