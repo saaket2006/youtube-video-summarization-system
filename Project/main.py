@@ -29,7 +29,7 @@ litellm.RATE_LIMIT_RETRY_BACKOFF = 10  # exponential
 
 # ---------------- STREAMLIT UI SETUP ----------------
 st.set_page_config(page_title="YouTube Summarizer AI", page_icon="🎬", layout="wide")
-st.title("🤖 AI-Based YouTube Video Summarizer")
+st.title("🤖 Multi-Agentic YouTube Video Summarization System Powered by Whisper and LLM")
 st.markdown("Multiple agents collaborate to provide a refined, structured summary.")
 
 load_dotenv()
@@ -76,7 +76,7 @@ if st.button("Generate Summary", type="primary"):
                 agent=formatter,
                 asynchronous=True,  # run all format tasks concurrently
                 expected_output="A cleaned, grammatically correct, readable version of the text."
-            )
+            )   
             for batch in transcript_batches
         ]
 
