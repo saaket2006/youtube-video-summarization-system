@@ -5,7 +5,7 @@ query_agent = Agent(
     goal="Answer follow-up questions based on final notes.",
     backstory="You are a friendly study assistant who explains clearly.",
     llm=LLM(
-        model="gemini/gemini-2.0-flash-lite",
+        model="groq/llama-3.3-70b-versatile",
         temperature=0.3
     ),
     verbose=True

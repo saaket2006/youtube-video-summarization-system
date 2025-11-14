@@ -171,8 +171,8 @@ if st.button("Generate Summary", type="primary"):
         validation_result = validation_crew.kickoff()
 
         # ---------------- DISPLAY FINAL SUMMARY ----------------
-        st.subheader("✅ Final Sectional Summary")
-        st.write(final_summary_text)
+        #st.subheader("✅ Final Sectional Summary")
+        #st.write(final_summary_text)
 
         st.divider()
 

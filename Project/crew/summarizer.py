@@ -8,10 +8,7 @@ chunk_summarizer = Agent(
         "You provide efficient and concise summaries focused on capturing the key ideas "
         "and main structure of the content. You avoid unnecessary details here."
     ),
-    llm=LLM(
-        model="gemini/gemini-2.0-flash",
-        temperature=0.3
-    ),
+    llm=LLM(model="gemini/gemini-2.0-flash-lite", temperature=0.3),
     verbose=True,
     memory=False
 )
