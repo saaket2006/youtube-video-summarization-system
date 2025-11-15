@@ -4,7 +4,7 @@ import time
 import litellm
 from dotenv import load_dotenv
 from crewai import Crew, Task, Process
-
+from pathlib import Path
 # ---- Import Agents ----
 from crew.validator import validator, validate_summary
 from crew.loader import loader
@@ -36,7 +36,11 @@ load_dotenv()
 groq_key = os.getenv("GROQ_API_KEY", "")
 if groq_key:
     os.environ["LITELLM_API_KEY"] = os.getenv("GROQ_API_KEY")
+env_path = Path(__file__).resolve().parent / ".env"
+load_dotenv(dotenv_path=env_path)
 
+#print("Loaded ENV from:", env_path)
+#print("GEMINI_API_KEY =", os.getenv("GEMINI_API_KEY"))
 
 video_url = st.text_input("Enter a YouTube Video URL:", placeholder="https://www.youtube.com/watch?v=xxxx")
 
@@ -70,70 +74,64 @@ if st.button("Generate Summary", type="primary"):
 
         # ---------------- TASK DEFINITIONS ----------------
 
+        # 1. FORMATTER TASKS
         format_tasks = [
             Task(
+                name=f"format_task_{i}",
                 description=f"Clean and fix readability of this transcript segment:\n\n{batch}",
                 agent=formatter,
-                asynchronous=True,  # run all format tasks concurrently
+                asynchronous=True,
                 expected_output="A cleaned, grammatically correct, readable version of the text."
-            )   
-            for batch in transcript_batches
+            )
+            for i, batch in enumerate(transcript_batches)
         ]
 
-        # ✅ Step 5: Summarize Each Cleaned Batch (also parallelized)
+        # 2. CHUNK SUMMARY TASKS
         summary_tasks = [
             Task(
+                name=f"summary_task_{i}",
                 description=(
                     "Summarize this cleaned transcript batch into key structured notes. "
                     "Focus on clarity, topic flow, and extracting main ideas.\n\n"
-                    "Return bullet-style notes or short paragraphs for each concept."
+                    "Return bullet points ONLY. No long paragraphs."
                 ),
                 agent=chunk_summarizer,
-                asynchronous=True,  # parallel summarization for speed
-                expected_output="A concise but meaningful bullet-point summary of the batch."
+                asynchronous=True,
+                expected_output="Bullet-point structured notes for the batch."
             )
-            for _ in transcript_batches
+            for i in range(len(transcript_batches))
         ]
 
-        # ✅ Step 6: Combine all summaries into final long-form notes
+        # 3. FINAL SUMMARY TASK (NAMED!)
         final_summary_task = Task(
+            name="final_summary",
             description=(
                 "Combine all batch-level summaries into well-structured, lecture-style notes.\n\n"
-                "Guidelines:\n"
-                "- Maintain original flow and logical order from the video.\n"
-                "- Use headings and subheadings (##) to separate sections.\n"
-                "- Write in a clear, instructional tone.\n"
-                "- Use bullet points for lists, examples, and features.\n"
-                "- Highlight key terms in **bold**.\n\n"
-                "Output Format (example):\n"
-                "# Title\n"
-                "## Overview\n"
-                "Short introduction paragraph.\n\n"
-                "## Section Title\n"
-                "- Supporting point\n"
-                "- Example or explanation\n\n"
-                "## Key Takeaways\n"
-                "- 5–10 concise bullet points summarizing core ideas\n\n"
-                "## One-Line Summary\n"
-                "A single sentence capturing the entire video message."
+                "STRICT FORMAT RULES:\n"
+                "- MUST use headings (#, ##, ###)\n"
+                "- MUST use bullet points for content\n"
+                "- MUST avoid long paragraphs\n"
+                "- MUST include key takeaways\n"
+                "- MUST include one-line summary\n"
+                "- MUST output clean Markdown\n"
             ),
             agent=final_summarizer,
             context=summary_tasks,
-            expected_output="Structured, polished lecture-style notes in Markdown format."
+            expected_output="Sectional markdown summary."
         )
 
-        # ✅ Step 7: Prepare Q&A readiness
+        # 4. QA PREPARATION TASK (NAMED!)
         qa_task = Task(
+            name="qa_preparation",
             description=(
-                "Analyze the final summarized content and prepare it so that "
-                "follow-up questions about the lecture can be answered accurately."
+                "Prepare the final summary content for answering follow-up questions. "
+                "Do NOT rewrite the summary. Simply acknowledge readiness."
             ),
             agent=query_agent,
-            expected_output="Confirmation that Q&A context is ready."
+            expected_output="Ready for Q&A."
         )
 
-
-       # ---------------- CREW PIPELINE ----------------
+        # ---------------- CREW PIPELINE ----------------
         crew = Crew(
             agents=[loader, transcriber, formatter, chunk_summarizer, final_summarizer, validator, query_agent],
             tasks=format_tasks + summary_tasks + [final_summary_task, qa_task],
@@ -142,11 +140,16 @@ if st.button("Generate Summary", type="primary"):
             verbose=True
         )
 
-        # Run the full pipeline
+        # ---------------- RUN PIPELINE ----------------
         result = crew.kickoff()
 
-        # Extract text output from result (Crew can return dict or str)
-        final_summary_text = str(result)
+        # ---------------- EXTRACT REAL FINAL SUMMARY ----------------
+        # Extract FINAL SUMMARY (second-last task, because last = QA)
+        # Extract FINAL SUMMARY (second-last task output)
+        final_summary_task_output = result.tasks_output[-2]
+        final_summary_text = final_summary_task_output.raw
+
+
 
         # ✅ Define Validator Task AFTER summary is available
         validate_task = Task(
@@ -171,8 +174,8 @@ if st.button("Generate Summary", type="primary"):
         validation_result = validation_crew.kickoff()
 
         # ---------------- DISPLAY FINAL SUMMARY ----------------
-        #st.subheader("✅ Final Sectional Summary")
-        #st.write(final_summary_text)
+        st.subheader("✅ Final Sectional Summary")
+        st.markdown(final_summary_text)
 
         st.divider()
 
