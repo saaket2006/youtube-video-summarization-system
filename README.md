@@ -1,4 +1,4 @@
-# 🎥 YouTube Lecture Summarizer (Multi-Agent AI Notes Generator)
+# 🎥 Multi-Agentic YouTube Video Summarization Tool Powered by Whisper and LLMs
 
 This project is a **YouTube Video Summarization Tool** built using:
 - **CrewAI** (Multi-agent reasoning pipeline)
