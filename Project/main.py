@@ -145,10 +145,10 @@ if st.button("Generate Summary", type="primary"):
 
         # ---------------- EXTRACT REAL FINAL SUMMARY ----------------
         # Extract FINAL SUMMARY (second-last task, because last = QA)
-        # Extract FINAL SUMMARY (second-last task output)
         final_summary_task_output = result.tasks_output[-2]
         final_summary_text = final_summary_task_output.raw
-
+        # Store to session
+        st.session_state["final_summary"] = final_summary_text
 
 
         # ✅ Define Validator Task AFTER summary is available
@@ -184,8 +184,13 @@ if st.button("Generate Summary", type="primary"):
         user_query = st.text_input("Enter your question here:")
 
         if st.button("Ask"):
+            if "final_summary" not in st.session_state:
+                st.error("Please generate a summary first.")
+                st.stop()
+
+            summary_for_qa = st.session_state["final_summary"]
+
             answer = query_agent.run(
-                f"Use the following notes to answer the question.\n\nNOTES:\n{final_summary_text}\n\nQUESTION:\n{user_query}"
+                f"Use the following notes to answer the question.\n\nNOTES:\n{summary_for_qa}\n\nQUESTION:\n{user_query}"
             )
             st.write(answer)
-
