@@ -11,51 +11,41 @@ def extract_video_id(url):
     return None
 
 
-def load_youtube_transcript(video_id, lang: str | None = None):
-
-    # Unique filename
+def load_youtube_transcript(video_id, lang=None):
     base = f"sub_{uuid.uuid4().hex}"
-    subtitle_file = base + ".vtt"
 
-    # build the command
-    command = [
+    cmd = [
         "yt-dlp",
         f"https://www.youtube.com/watch?v={video_id}",
         "--skip-download",
-        "--write-auto-sub",        # auto captions
-        "--write-sub",             # uploader captions
+        "--write-auto-sub",
+        "--write-sub",
         "--sub-format", "vtt",
-        "-o", base                 # no extension here; yt-dlp adds it
+        "-o", base
     ]
 
-    # if lang requested, pass it
     if lang:
-        command.extend(["--sub-lang", lang])
+        cmd += ["--sub-lang", lang]
 
-    subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    # detect generated file
     generated_file = None
-    for file in os.listdir("."):
-        if file.startswith(base) and file.endswith(".vtt"):
-            generated_file = file
+    for f in os.listdir("."):
+        if f.startswith(base) and f.endswith(".vtt"):
+            generated_file = f
             break
 
     if not generated_file:
         return None
 
-    # Convert .vtt → text (removing timestamps & formatting)
-    text_lines = []
+    lines = []
     with open(generated_file, "r", encoding="utf-8") as f:
         for line in f:
             if "-->" in line or line.strip().isdigit() or line.strip() == "" or line.startswith("WEBVTT"):
                 continue
-            text_lines.append(line.strip())
+            lines.append(line.strip())
 
-    # cleanup
-    try:
-        os.remove(generated_file)
-    except Exception:
-        pass
+    try: os.remove(generated_file)
+    except: pass
 
-    return " ".join(text_lines)
+    return " ".join(lines)
