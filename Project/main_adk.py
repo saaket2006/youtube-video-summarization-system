@@ -1,3 +1,4 @@
+# main_adk.py
 import streamlit as st
 import os
 from pathlib import Path
@@ -11,6 +12,9 @@ from agents.summarizer_adk import summarize_chunk, summarize_final
 from agents.validator_adk import validate_summary_text
 from agents.query_adk import answer_from_notes
 
+# translator agent (for arbitrary target languages)
+from agents.translator_adk import translate_text
+
 import concurrent.futures
 
 # ensure folders
@@ -22,7 +26,14 @@ st.title("🧠 YouTube Video Summarization System Powered by Google ADK")
 
 video_url = st.text_input("Enter a YouTube Video URL:", placeholder="https://www.youtube.com/watch?v=xxxx")
 
-# SUMMARY GENERATION BLOCK
+# --- Translation / transcription mode UI ---
+transcription_mode = st.selectbox(
+    "Transcription mode",
+    ("Auto (no translate)", "Translate to English (Whisper fast)", "Translate to...")
+)
+target_language = "English"
+if transcription_mode == "Translate to...":
+    target_language = st.text_input("Target language (e.g., Hindi, French, en):", value="English").strip()
 
 if st.button("Generate Summary", type="primary"):
 
@@ -33,12 +44,44 @@ if st.button("Generate Summary", type="primary"):
     with st.spinner("Analyzing video and preparing agents…"):
 
         video_id = extract_video_id(video_url)
-        transcript = load_youtube_transcript(video_id)
+
+        # Try to download a transcript/subtitles first (don't force 'en' unless user requested)
+        subtitle_lang = None
+        # If user explicitly chose "Translate to English (Whisper fast)" we still attempt to get subtitles in English first
+        if transcription_mode == "Translate to English (Whisper fast)":
+            subtitle_lang = "en"
+
+        transcript = load_youtube_transcript(video_id, lang=subtitle_lang)
 
         if transcript is None:
             st.info("Transcript unavailable → Using Whisper fallback")
-            transcript = transcribe_audio(video_url)
+            # call whisper transcribe with translate option when appropriate
+            if transcription_mode == "Auto (no translate)":
+                transcript = transcribe_audio(video_url, translate=False)
+            elif transcription_mode == "Translate to English (Whisper fast)":
+                transcript = transcribe_audio(video_url, translate=True, target_language="en")
+            else:
+                # Translate to arbitrary target language: whisper -> then ADK translate (whisper doesn't support non-EN translation directly)
+                transcript = transcribe_audio(video_url, translate=False)
+                if target_language and target_language.lower() not in ("en", "english"):
+                    st.info(f"Translating transcript to {target_language} via ADK...")
+                    transcript = translate_text(transcript, target_language)
+        else:
+            # We have subtitle text. If user requested translation to non-default target, perform it.
+            if transcription_mode == "Translate to English (Whisper fast)":
+                # subtitles were requested in en; if they exist we already have English transcript
+                pass
+            elif transcription_mode == "Translate to...":
+                if target_language and target_language.lower() not in ("en", "english"):
+                    st.info(f"Translating downloaded subtitles to {target_language} via ADK...")
+                    transcript = translate_text(transcript, target_language)
+                else:
+                    # user asked for English target but we downloaded another language; if subtitle_lang wasn't set earlier, attempt translation to English
+                    if subtitle_lang is None:
+                        # subtitles may be in any language; translate to English if requested
+                        pass  # keep as-is
 
+        # Proceed with chunking and summarization as before
         raw_chunks = chunk_text(transcript, max_chars=3000)
         transcript_batches = group_chunks(raw_chunks, batch_size=10)
         preview_chunks(transcript_batches)
@@ -71,7 +114,6 @@ if st.button("Generate Summary", type="primary"):
 # DISPLAY SUMMARY (IF EXISTS)
 
 if "final_summary" in st.session_state:
-    #st.subheader("✅ Final Sectional Summary")
     st.markdown(st.session_state["final_summary"])
     st.divider()
 

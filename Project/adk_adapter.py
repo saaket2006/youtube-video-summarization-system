@@ -8,7 +8,7 @@ class ADKAdapter:
     Falls back to litellm if GEMINI_API_KEY is missing.
     """
 
-    def __init__(self, model: str = "gemini-1.5-flash"):
+    def __init__(self, model: str = "gemini-2.0-flash"):
         self.model_name = model
 
         api_key = os.getenv("GEMINI_API_KEY")
