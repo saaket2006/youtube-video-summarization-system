@@ -19,8 +19,8 @@ import concurrent.futures
 for folder in ["data", "data/downloads", "data/transcripts", "data/summaries", ".data/audio"]:
     os.makedirs(folder, exist_ok=True)
 
-st.set_page_config(page_title="YouTube Video Summarization (ADK)", page_icon="🤖", layout="wide")
-st.title("🧠 YouTube Video Summarization – Multilingual ADK Version")
+st.set_page_config(page_title="YouTube Video Summarization System", page_icon="🤖", layout="wide")
+st.title("🧠 Multi-Agentic YouTube Video Summarization Powered by Whisper and Google ADK")
 
 video_url = st.text_input("Enter a YouTube Video URL:", placeholder="https://www.youtube.com/watch?v=xxxx")
 
