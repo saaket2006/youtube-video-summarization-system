@@ -64,6 +64,35 @@ Step 10: Streamlit UI displays the summary and enables the Q&A interaction.
 Step 11: Q&A Agent responds to user queries using the summary as context.    
 
 
+## Project Structure   
+
+The project is organized into modular components, each handling a specific part of the YouTube summarization workflow. The structure is as follows:
+
+- main_adk.py
+   - Main Streamlit application that connects the user interface with the ADK-based multi-agent pipeline.
+
+- agents/ - Contains all Google ADK agents used throughout the summarization process.    
+   - formatter_adk.py – Cleans and restructures raw transcript chunks.
+   - chunk_summarizer_adk.py – Summarizes cleaned chunks in parallel.
+   - final_summarizer_adk.py – Merges all chunk summaries into a polished final summary.
+   - translator_adk.py – Translates the final summary into the selected language.
+   - validator_adk.py – Ensures correctness, structure, and academic readability.
+   - qa_tutor_adk.py – ADK-powered agent that answers user questions using the final summary as context.
+
+- utils/ - Contains utility modules required by the agents.
+   - transcript_utils.py – Retrieves YouTube transcripts when available.
+   - whisper_utils.py – Performs Whisper-based audio transcription if needed.
+   - chunk_utils.py – Splits the full transcript into smaller batches.
+
+- config/
+   - .env - Stores sensitive keys and environment configuration (not committed to Git).
+
+- requirements.txt - Dependency list for all required Python packages.
+
+- README.md - Complete documentation for the entire project.
+
+
+
 ## Setup and Running Instructions
 
 You can run this project either locally or through GitHub Codespaces.    
