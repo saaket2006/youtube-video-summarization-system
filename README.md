@@ -19,6 +19,7 @@ The architecture is composed of multiple agents and utility layers that work tog
 <div align="center">
    <img width="4158" height="3685" alt="Architecture" src="https://github.com/user-attachments/assets/a9ee655b-b29f-4090-b735-d7fe2df2c8f7" />
 </div>
+<br>
 
    
 *Transcript Retrieval Layer* -  
@@ -48,6 +49,7 @@ The workflow describes how the system processes user input from start to end:
 <div align="center">
    <img width="539" height="1352" alt="Methodology" src="https://github.com/user-attachments/assets/74758f42-62d6-4d28-b191-2e13b63f7608" />
 </div>
+<br>
 
 Step 1: User provides YouTube URL and selects translation mode.    
 Step 2: System extracts video ID and attempts transcript retrieval.    
@@ -69,7 +71,7 @@ You can run this project either locally or through GitHub Codespaces.
 *Running Locally* :-    
 Clone the repository to your system or download the zip file into your system.    
 Create and activate a Python virtual environment.    
-Install dependencies with "pip install -r requirements.txt".    
+Install dependencies with "pip install -r requirements.txt". (Make sure to download the required CUDA version for PyTorch so that the overall speed could be very faster)   
 Add your required API keys and environment variables to the appropriate config file or ".env".    
 Launch the application using "streamlit run main_adk.py".    
 Open the displayed local URL to access the interface.    
