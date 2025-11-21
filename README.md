@@ -1,42 +1,125 @@
 # 🎥 Multi-Agentic YouTube Video Summarization Tool Powered by Whisper and LLMs
 
-This project is a **YouTube Video Summarization Tool** built using:
-- **CrewAI** (Multi-agent reasoning pipeline)
-- **Groq LLaMA 3** (Fast + high-quality text reasoning)
-- **Gemini LLM Models** (Medium-paced, High tokens per minute)
-- **Whisper Speech-to-Text** (Fallback transcription when transcripts aren't available)
-- **Streamlit** UI
+AI-Based YouTube Summarization System
 
-The tool creates **structured lecture-style study notes**, perfect for:
-- Students
-- Self-learners
-- Researchers
-- Exam preparation
+This project is an AI-powered end-to-end system designed to automatically generate structured, clean, and academically styled summaries of YouTube videos. By combining transcript extraction, audio transcription, chunking, multi-agent processing, translation, and validation, the system produces high-quality summaries suitable for research, learning, and revision. Users only provide a YouTube URL and an optional translation preference, and the system handles the complete pipeline, including post-summary Q&A using the final content.
 
----
+Problem Statement
 
-## ✨ Features
+YouTube hosts a vast amount of educational and technical content, but much of it is lengthy, unstructured, and time-consuming to consume. Many videos lack accurate transcripts, and manually extracting key concepts or converting them into structured notes is a tedious process. Learners and professionals often need reliable, concise insights without spending hours watching video content. Moreover, multilingual audiences face the added challenge of understanding videos published only in a single language.
 
-✅ Fetches official YouTube transcript automatically  
-✅ If unavailable → Transcribes audio using Whisper  
-✅ Splits transcript into chunks  
-✅ Summarizes chunks in parallel  
-✅ Merges them into **clear college-level lecture notes**  
-✅ Allows users to **ask questions** about the video afterward  
-✅ Works on **protected / partially restricted** videos using cookies  
-✅ Supports **Groq free tier** efficiently with token management  
+Solution Statement
 
----
+The AI-Based YouTube Summarization System solves these issues by providing an automated, multi-agent approach that transforms YouTube content into high-quality summaries. The system retrieves or transcribes the video, cleans and chunks the text, processes it through parallel formatter and summarizer agents, merges results into a final structured summary, and optionally translates it. A validator agent ensures correctness and readability, and a Q&A agent answers follow-up questions. This solution drastically reduces consumption time, eliminates manual summarization effort, and provides accessible multilingual output.
 
-## 📦 How to Run
+Architecture
 
---> Put in your API Key in the .env file   
---> Check for API   
-    export $(grep -v '^#' .env | xargs)   
-    echo $GROQ_API_KEY   
---> pip install -r requirements.txt   
---> sudo apt-get update && sudo apt-get install -y ffmpeg    
---> Check for cookies    
-    echo "cookies.txt" >> .gitignore   
-    git status --ignored --short   
---> streamlit run main.py
+The architecture is composed of multiple agents and utility layers that work together in a clean, modular pipeline:
+
+Transcript Retrieval Layer
+
+transcript_utils: Loads official YouTube transcripts when available.
+
+whisper_utils: Performs Whisper audio transcription when transcripts are unavailable.
+
+Chunking Layer
+
+chunk_utils: Splits long transcripts into smaller text segments.
+
+batch_chunks: Organizes these segments into manageable batches for parallel processing.
+
+Formatter Agent
+
+Cleans transcript chunks, fixes grammar, restructures sentences, and improves readability.
+
+Chunk Summarizer Agent
+
+Summarizes each cleaned chunk independently.
+
+Ensures clarity, structure, and removal of unnecessary content.
+
+Final Summarizer Agent
+
+Aggregates all chunk summaries.
+
+Produces a polished, section-wise final summary.
+
+Translator Agent
+
+Converts the final English summary into the user’s selected language.
+
+Preserves headings, bullets, and markdown structure.
+
+Validator Agent
+
+Performs correctness, coherence, and structural validation of the final summary.
+
+Ensures that the content meets academic-style requirements.
+
+Q&A Agent
+
+Allows users to ask follow-up questions.
+
+Responds using the final summary as the contextual knowledge base.
+
+Workflow
+
+The workflow describes how the system processes user input from start to end:
+
+Step 1: User provides YouTube URL and selects translation mode.
+
+Step 2: System extracts video ID and attempts transcript retrieval.
+
+Step 3: If transcript is unavailable, Whisper performs audio transcription.
+
+Step 4: Transcript is chunked into smaller text batches.
+
+Step 5: Parallel processing begins:
+
+Formatter Agent cleans each chunk.
+
+Chunk Summarizer Agent generates chunk-level summaries.
+
+Step 6: All chunk summaries are aggregated and merged.
+
+Step 7: Final Summarizer Agent produces a complete structured summary.
+
+Step 8: If translation is enabled, Translator Agent converts the summary into the chosen language.
+
+Step 9: Validator Agent checks the final output for quality and formatting.
+
+Step 10: Streamlit UI displays the summary and enables the Q&A interaction.
+
+Step 11: Q&A Agent responds to user queries using the summary as context.
+
+Setup and Running Instructions
+
+You can run this project either locally or through GitHub Codespaces.
+
+Running Locally
+
+Clone the repository to your system.
+
+Create and activate a Python virtual environment.
+
+Install dependencies with pip install -r requirements.txt.
+
+Add your required API keys and environment variables to the appropriate config file or .env.
+
+Launch the application using streamlit run app.py.
+
+Open the displayed local URL to access the interface.
+
+Running on GitHub Codespaces
+
+Open the repository inside GitHub Codespaces.
+
+Allow the environment to initialize the dev container.
+
+Install dependencies by running pip install -r requirements.txt.
+
+Ensure that API keys are added to the Codespaces environment variables.
+
+Start the application using streamlit run app.py.
+
+Access the forwarded public URL automatically generated by Codespaces to use the application.
