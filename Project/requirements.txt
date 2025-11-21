@@ -1,20 +1,22 @@
-streamlit>=1.33.0
-python-dotenv>=1.0.1
+streamlit
+python-dotenv
 google-adk
 
 # LLM + API
 openai
 google-generativeai
-google-generativeai>=0.5.2
 
 # YouTube transcript & download
 youtube-transcript-api==0.6.2
 git+https://github.com/pytube/pytube
-yt-dlp>=2024.03.10
+yt-dlp
 
 # Whisper Speech-to-Text
 openai-whisper
 torch --index-url https://download.pytorch.org/whl/cpu
+# If using GPU
+torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu13
+torchaudio --index-url https://download.pytorch.org/whl/cu130
 
 # Utilities
 requests
