@@ -2,16 +2,19 @@
 
 This project is an AI-powered end-to-end system designed to automatically generate structured, clean, and academically styled summaries of YouTube videos. Using a multi-agent pipeline developed with Google’s AI Development Kit (ADK), the system orchestrates transcript extraction, audio transcription, chunking, agent collaboration, translation, and validation to produce high-quality summaries suitable for research and learning. Users simply provide a YouTube URL and an optional translation preference, and the ADK-driven agent workflow handles the complete lifecycle, including post-summary Q&A based on the final output.
 
-**Problem Statement**
+
+## Problem Statement
 
 YouTube offers a vast collection of educational and technical content, but a significant portion of it is long, unstructured, and difficult to process efficiently. Many videos lack accurate transcripts, making it even harder for students, researchers, and multilingual audiences to extract meaningful insights. Manually summarizing videos requires substantial effort, is inconsistent, and is not scalable when working with large volumes of content. These limitations create a clear need for an automated, reliable, and structured summarization mechanism.
 
-**Solution Statement**
+
+##Solution Statement
 
 The AI-Based YouTube Summarization System addresses this challenge by leveraging Google ADK to build an intelligent multi-agent workflow that transforms YouTube videos into high-quality summaries. The system retrieves or transcribes the video, cleans and chunks the text, and uses ADK-powered formatter and summarizer agents running in parallel to process the content efficiently. The outputs are merged by a final summarizer agent, and optional translation is provided through an additional ADK agent. A validator agent ensures correctness, structure, and readability, while a Q&A agent allows users to interact with the summarized material. This tightly orchestrated ADK workflow removes the burden of manual summarization and provides multilingual, academically structured results within seconds.
 
 
-**Architecture**
+## Architecture
+
 The architecture is composed of multiple agents and utility layers that work together in a clean, modular pipeline:
 
 *Transcript Retrieval Layer*
@@ -35,7 +38,7 @@ batch_chunks: Organizes these segments into manageable batches for parallel proc
 *Q&A Agent* - Allows users to ask follow-up questions. Responds using the final summary as the contextual knowledge base.
 
 
-**Workflow**
+## Workflow
 
 The workflow describes how the system processes user input from start to end:
 
@@ -52,7 +55,7 @@ Step 10: Streamlit UI displays the summary and enables the Q&A interaction.
 Step 11: Q&A Agent responds to user queries using the summary as context.
 
 
-**Setup and Running Instructions**
+## Setup and Running Instructions
 
 You can run this project either locally or through GitHub Codespaces.
 
