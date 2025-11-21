@@ -5,6 +5,8 @@ from pathlib import Path
 from utils.chunk_utils import chunk_text, preview_chunks, group_chunks
 from utils.transcript_utils import extract_video_id, load_youtube_transcript
 from utils.whisper_utils import transcribe_audio
+from dotenv import load_dotenv
+load_dotenv()
 
 # agents
 from agents.formatter_adk import format_text
@@ -20,15 +22,19 @@ for folder in ["data", "data/downloads", "data/transcripts", "data/summaries", "
     os.makedirs(folder, exist_ok=True)
 
 st.set_page_config(page_title="YouTube Video Summarization System", page_icon="🤖", layout="wide")
-st.title("🧠 Multi-Agentic YouTube Video Summarization Powered by Whisper and Google ADK")
+st.title("🧠 Multi-Agentic YouTube Video Summarization System Powered by Whisper and Google ADK")
 
 video_url = st.text_input("Enter a YouTube Video URL:", placeholder="https://www.youtube.com/watch?v=xxxx")
 
 
 transcription_mode = st.selectbox(
     "Transcription / Translation mode",
-    ("Auto (no translate)", "Translate to English (Whisper fast)", "Translate to...")
-)
+    ("Translate to English (Whisper & fast)", "Auto (no Whisper)", "Translate to...")
+)   
+#Auto - Use available subtitles if present; otherwise, transcribe audio in original language.
+#Translate to English (Whisper fast) - Use available English subtitles if present; otherwise, use Whisper to transcribe and translate to English.
+#Translate to... - Transcribe audio in original language (using Whisper if needed) and then translate to specified target language using ADK.
+
 
 target_language = "English"
 if transcription_mode == "Translate to...":
