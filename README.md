@@ -20,6 +20,7 @@ The architecture is composed of multiple agents and utility layers that work tog
 <img width="4158" height="3685" alt="Architecture" src="https://github.com/user-attachments/assets/a9ee655b-b29f-4090-b735-d7fe2df2c8f7" />
 
 
+   
 *Transcript Retrieval Layer* -  
 transcript_utils: Loads official YouTube transcripts when available.  
 whisper_utils: Performs Whisper audio transcription when transcripts are unavailable.
@@ -44,6 +45,9 @@ batch_chunks: Organizes these segments into manageable batches for parallel proc
 ## Workflow
 
 The workflow describes how the system processes user input from start to end:
+
+<img width="539" height="1352" alt="Methodology" src="https://github.com/user-attachments/assets/74758f42-62d6-4d28-b191-2e13b63f7608" />
+   
 
 Step 1: User provides YouTube URL and selects translation mode.    
 Step 2: System extracts video ID and attempts transcript retrieval.    
