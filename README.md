@@ -1,68 +1,37 @@
 # 🎥 Multi-Agentic YouTube Video Summarization Tool Powered by Whisper and LLMs
 
-AI-Based YouTube Summarization System
+This project is an AI-powered end-to-end system designed to automatically generate structured, clean, and academically styled summaries of YouTube videos. Using a multi-agent pipeline developed with Google’s AI Development Kit (ADK), the system orchestrates transcript extraction, audio transcription, chunking, agent collaboration, translation, and validation to produce high-quality summaries suitable for research and learning. Users simply provide a YouTube URL and an optional translation preference, and the ADK-driven agent workflow handles the complete lifecycle, including post-summary Q&A based on the final output.
 
-This project is an AI-powered end-to-end system designed to automatically generate structured, clean, and academically styled summaries of YouTube videos. By combining transcript extraction, audio transcription, chunking, multi-agent processing, translation, and validation, the system produces high-quality summaries suitable for research, learning, and revision. Users only provide a YouTube URL and an optional translation preference, and the system handles the complete pipeline, including post-summary Q&A using the final content.
+**Problem Statement**
 
-Problem Statement
+YouTube offers a vast collection of educational and technical content, but a significant portion of it is long, unstructured, and difficult to process efficiently. Many videos lack accurate transcripts, making it even harder for students, researchers, and multilingual audiences to extract meaningful insights. Manually summarizing videos requires substantial effort, is inconsistent, and is not scalable when working with large volumes of content. These limitations create a clear need for an automated, reliable, and structured summarization mechanism.
 
-YouTube hosts a vast amount of educational and technical content, but much of it is lengthy, unstructured, and time-consuming to consume. Many videos lack accurate transcripts, and manually extracting key concepts or converting them into structured notes is a tedious process. Learners and professionals often need reliable, concise insights without spending hours watching video content. Moreover, multilingual audiences face the added challenge of understanding videos published only in a single language.
+**Solution Statement**
 
-Solution Statement
+The AI-Based YouTube Summarization System addresses this challenge by leveraging Google ADK to build an intelligent multi-agent workflow that transforms YouTube videos into high-quality summaries. The system retrieves or transcribes the video, cleans and chunks the text, and uses ADK-powered formatter and summarizer agents running in parallel to process the content efficiently. The outputs are merged by a final summarizer agent, and optional translation is provided through an additional ADK agent. A validator agent ensures correctness, structure, and readability, while a Q&A agent allows users to interact with the summarized material. This tightly orchestrated ADK workflow removes the burden of manual summarization and provides multilingual, academically structured results within seconds.
 
-The AI-Based YouTube Summarization System solves these issues by providing an automated, multi-agent approach that transforms YouTube content into high-quality summaries. The system retrieves or transcribes the video, cleans and chunks the text, processes it through parallel formatter and summarizer agents, merges results into a final structured summary, and optionally translates it. A validator agent ensures correctness and readability, and a Q&A agent answers follow-up questions. This solution drastically reduces consumption time, eliminates manual summarization effort, and provides accessible multilingual output.
-
-Architecture
-
+**Architecture**
 The architecture is composed of multiple agents and utility layers that work together in a clean, modular pipeline:
 
-Transcript Retrieval Layer
+*Transcript Retrieval Layer* - transcript_utils: Loads official YouTube transcripts when available.
+                               whisper_utils: Performs Whisper audio transcription when transcripts are unavailable.
 
-transcript_utils: Loads official YouTube transcripts when available.
+*Chunking Layer* - chunk_utils: Splits long transcripts into smaller text segments.
+                   batch_chunks: Organizes these segments into manageable batches for parallel processing.
 
-whisper_utils: Performs Whisper audio transcription when transcripts are unavailable.
+*Formatter Agent* - Cleans transcript chunks, fixes grammar, restructures sentences, and improves readability.
 
-Chunking Layer
+*Chunk Summarizer Agent* - Summarizes each cleaned chunk independently. Ensures clarity, structure, and removal of unnecessary content.
 
-chunk_utils: Splits long transcripts into smaller text segments.
+*Final Summarizer Agent* - Aggregates all chunk summaries. Produces a polished, section-wise final summary.
 
-batch_chunks: Organizes these segments into manageable batches for parallel processing.
+*Translator Agent* - Converts the final English summary into the user’s selected language. Preserves headings, bullets, and markdown structure.
 
-Formatter Agent
+*Validator Agent* - Performs correctness, coherence, and structural validation of the final summary. Ensures that the content meets academic-style requirements.
 
-Cleans transcript chunks, fixes grammar, restructures sentences, and improves readability.
+*Q&A Agent* - Allows users to ask follow-up questions. Responds using the final summary as the contextual knowledge base.
 
-Chunk Summarizer Agent
-
-Summarizes each cleaned chunk independently.
-
-Ensures clarity, structure, and removal of unnecessary content.
-
-Final Summarizer Agent
-
-Aggregates all chunk summaries.
-
-Produces a polished, section-wise final summary.
-
-Translator Agent
-
-Converts the final English summary into the user’s selected language.
-
-Preserves headings, bullets, and markdown structure.
-
-Validator Agent
-
-Performs correctness, coherence, and structural validation of the final summary.
-
-Ensures that the content meets academic-style requirements.
-
-Q&A Agent
-
-Allows users to ask follow-up questions.
-
-Responds using the final summary as the contextual knowledge base.
-
-Workflow
+**Workflow**
 
 The workflow describes how the system processes user input from start to end:
 
@@ -75,10 +44,8 @@ Step 3: If transcript is unavailable, Whisper performs audio transcription.
 Step 4: Transcript is chunked into smaller text batches.
 
 Step 5: Parallel processing begins:
-
-Formatter Agent cleans each chunk.
-
-Chunk Summarizer Agent generates chunk-level summaries.
+        Formatter Agent cleans each chunk.
+        Chunk Summarizer Agent generates chunk-level summaries.
 
 Step 6: All chunk summaries are aggregated and merged.
 
@@ -92,34 +59,34 @@ Step 10: Streamlit UI displays the summary and enables the Q&A interaction.
 
 Step 11: Q&A Agent responds to user queries using the summary as context.
 
-Setup and Running Instructions
+**Setup and Running Instructions**
 
 You can run this project either locally or through GitHub Codespaces.
 
-Running Locally
+*Running Locally* :-
 
-Clone the repository to your system.
+Clone the repository to your system or download the zip file into your system.
 
 Create and activate a Python virtual environment.
 
-Install dependencies with pip install -r requirements.txt.
+Install dependencies with "pip install -r requirements.txt".
 
-Add your required API keys and environment variables to the appropriate config file or .env.
+Add your required API keys and environment variables to the appropriate config file or ".env".
 
-Launch the application using streamlit run app.py.
+Launch the application using "streamlit run main_adk.py".
 
 Open the displayed local URL to access the interface.
 
-Running on GitHub Codespaces
+*Running on GitHub Codespaces* :-
 
 Open the repository inside GitHub Codespaces.
 
 Allow the environment to initialize the dev container.
 
-Install dependencies by running pip install -r requirements.txt.
+Install dependencies by running "pip install -r requirements.txt".
 
 Ensure that API keys are added to the Codespaces environment variables.
 
-Start the application using streamlit run app.py.
+Start the application using "streamlit run main_adk.py".
 
 Access the forwarded public URL automatically generated by Codespaces to use the application.
