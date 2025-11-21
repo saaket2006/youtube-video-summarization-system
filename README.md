@@ -8,7 +8,7 @@ This project is an AI-powered end-to-end system designed to automatically genera
 YouTube offers a vast collection of educational and technical content, but a significant portion of it is long, unstructured, and difficult to process efficiently. Many videos lack accurate transcripts, making it even harder for students, researchers, and multilingual audiences to extract meaningful insights. Manually summarizing videos requires substantial effort, is inconsistent, and is not scalable when working with large volumes of content. These limitations create a clear need for an automated, reliable, and structured summarization mechanism.
 
 
-##Solution Statement
+## Solution Statement
 
 The AI-Based YouTube Summarization System addresses this challenge by leveraging Google ADK to build an intelligent multi-agent workflow that transforms YouTube videos into high-quality summaries. The system retrieves or transcribes the video, cleans and chunks the text, and uses ADK-powered formatter and summarizer agents running in parallel to process the content efficiently. The outputs are merged by a final summarizer agent, and optional translation is provided through an additional ADK agent. A validator agent ensures correctness, structure, and readability, while a Q&A agent allows users to interact with the summarized material. This tightly orchestrated ADK workflow removes the burden of manual summarization and provides multilingual, academically structured results within seconds.
 
@@ -17,12 +17,12 @@ The AI-Based YouTube Summarization System addresses this challenge by leveraging
 
 The architecture is composed of multiple agents and utility layers that work together in a clean, modular pipeline:
 
-*Transcript Retrieval Layer*
-transcript_utils: Loads official YouTube transcripts when available.
+*Transcript Retrieval Layer* -  
+transcript_utils: Loads official YouTube transcripts when available.  
 whisper_utils: Performs Whisper audio transcription when transcripts are unavailable.
 
-*Chunking Layer*
-chunk_utils: Splits long transcripts into smaller text segments.
+*Chunking Layer* -    
+chunk_utils: Splits long transcripts into smaller text segments.   
 batch_chunks: Organizes these segments into manageable batches for parallel processing.
 
 *Formatter Agent* - Cleans transcript chunks, fixes grammar, restructures sentences, and improves readability.
