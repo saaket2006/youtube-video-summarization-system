@@ -4,7 +4,7 @@ from adk_adapter import ADKAdapter
 
 class ADKAgent:
     def __init__(self, role: str, goal: str, backstory: str = "", model: str = None, temperature: float = 0.25):
-        model = model or "models/text-bison-001"
+        model = model or "gemini-2.0-flash"
         self.client = ADKAdapter(model=model)
         self.role = role
         self.goal = goal
