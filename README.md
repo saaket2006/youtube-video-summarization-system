@@ -17,6 +17,9 @@ The AI-Based YouTube Summarization System addresses this challenge by leveraging
 
 The architecture is composed of multiple agents and utility layers that work together in a clean, modular pipeline:
 
+<img width="4158" height="3685" alt="Architecture" src="https://github.com/user-attachments/assets/a9ee655b-b29f-4090-b735-d7fe2df2c8f7" />
+
+
 *Transcript Retrieval Layer* -  
 transcript_utils: Loads official YouTube transcripts when available.  
 whisper_utils: Performs Whisper audio transcription when transcripts are unavailable.
@@ -46,7 +49,7 @@ Step 1: User provides YouTube URL and selects translation mode.
 Step 2: System extracts video ID and attempts transcript retrieval.    
 Step 3: If transcript is unavailable, Whisper performs audio transcription.    
 Step 4: Transcript is chunked into smaller text batches.    
-Step 5: Parallel processing begins: Formatter Agent cleans each chunk; Chunk Summarizer Agent generates chunk-level summaries.    
+Step 5: *Parallel processing begins*: Formatter Agent cleans each chunk; Chunk Summarizer Agent generates chunk-level summaries.    
 Step 6: All chunk summaries are aggregated and merged.    
 Step 7: Final Summarizer Agent produces a complete structured summary.    
 Step 8: If translation is enabled, Translator Agent converts the summary into the chosen language.    
