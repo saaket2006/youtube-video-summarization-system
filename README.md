@@ -16,9 +16,9 @@ The AI-Based YouTube Summarization System addresses this challenge by leveraging
 ## Architecture
 
 The architecture is composed of multiple agents and utility layers that work together in a clean, modular pipeline:
-
-<img width="4158" height="3685" alt="Architecture" src="https://github.com/user-attachments/assets/a9ee655b-b29f-4090-b735-d7fe2df2c8f7" />
-
+<div align="center">
+   <img width="4158" height="3685" alt="Architecture" src="https://github.com/user-attachments/assets/a9ee655b-b29f-4090-b735-d7fe2df2c8f7" />
+</div>
 
    
 *Transcript Retrieval Layer* -  
@@ -45,9 +45,9 @@ batch_chunks: Organizes these segments into manageable batches for parallel proc
 ## Workflow
 
 The workflow describes how the system processes user input from start to end:
-
-<img width="539" height="1352" alt="Methodology" src="https://github.com/user-attachments/assets/74758f42-62d6-4d28-b191-2e13b63f7608" />
-   
+<div align="center">
+   <img width="539" height="1352" alt="Methodology" src="https://github.com/user-attachments/assets/74758f42-62d6-4d28-b191-2e13b63f7608" />
+</div>
 
 Step 1: User provides YouTube URL and selects translation mode.    
 Step 2: System extracts video ID and attempts transcript retrieval.    
