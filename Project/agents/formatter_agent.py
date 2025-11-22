@@ -1,4 +1,4 @@
-# agents/formatter_adk.py
+# agents/formatter_agent.py
 from agents.agent_base import ADKAgent
 
 formatter = ADKAgent(
