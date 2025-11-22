@@ -1,4 +1,4 @@
-# agents/summarizer_adk.py
+# agents/summarizer_agent.py
 from agents.agent_base import ADKAgent
 
 chunk_summarizer = ADKAgent(
