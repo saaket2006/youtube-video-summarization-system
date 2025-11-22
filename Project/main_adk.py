@@ -1,4 +1,4 @@
-# main_adk.py
+# main.py
 import streamlit as st
 import os
 from pathlib import Path
@@ -9,11 +9,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # agents
-from agents.formatter_adk import format_text
-from agents.summarizer_adk import summarize_chunk, summarize_final
-from agents.validator_adk import validate_summary_text
-from agents.query_adk import answer_from_notes
-from agents.translator_adk import translate_text
+from agents.formatter_agent import format_text
+from agents.summarizer_agent import summarize_chunk, summarize_final
+from agents.validator_agent import validate_summary_text
+from agents.query_agent import answer_from_notes
+from agents.translator_agent import translate_text
 
 import concurrent.futures
 
