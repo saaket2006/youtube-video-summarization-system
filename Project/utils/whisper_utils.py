@@ -21,8 +21,15 @@ def _translate_with_adk(text: str, target_language: str) -> str:
 
 
 def transcribe_audio(url: str, translate: bool = False, target_language: str = "en", model_size: str | None = None) -> str:
+    """
+    Downloads YouTube audio using yt-dlp and performs transcription using Whisper.
+    Supports:
+      - transcription only
+      - Whisper → English translation
+      - Whisper transcription → Gemini translation (multilingual)
+    """
 
-    # Hidden directory for audio files
+    #  Directory to store temporary audio files
     AUDIO_DIR = ".data/audio"
     os.makedirs(AUDIO_DIR, exist_ok=True)
 
