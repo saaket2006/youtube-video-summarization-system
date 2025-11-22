@@ -1,5 +1,5 @@
 # agents/formatter_adk.py
-from agents.adk_base import ADKAgent
+from agents.agent_base import ADKAgent
 
 formatter = ADKAgent(
     role="Transcript Formatter",
