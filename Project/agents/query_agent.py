@@ -1,12 +1,13 @@
 # agents/query_agent.py
 from agents.agent_base import ADKAgent
 
+# Agent responsible for answering user questions based on the final summarized notes
 query_agent = ADKAgent(
     role="Q&A Tutor",
     goal="Answer follow-up questions based on final notes.",
     backstory="Friendly study assistant who explains clearly.",
     model="gemini-2.5-flash",
-    temperature=0.3
+    temperature=0.3    # Slight creativity
 )
 
 def answer_from_notes(notes_markdown: str, question: str):
