@@ -1,6 +1,7 @@
 # agents/validator_agent.py
 from agents.agent_base import ADKAgent
 
+# Agent responsible for evaluating the quality of final lecture notes
 validator = ADKAgent(
     role="Summary Validator",
     goal="Check if lecture notes are clear, complete and structured.",
@@ -10,6 +11,12 @@ validator = ADKAgent(
 )
 
 def validate_summary_text(summary_text: str):
+    """
+    Validate the final summary.
+    - If quality is good → respond exactly with 'APPROVED'
+    - Otherwise → provide 2–3 short actionable suggestions
+    """
+    
     prompt = (
         "You are a validator. If the notes are complete, coherent and well-structured, reply exactly: APPROVED. "
         "Otherwise, give 2-3 short bullet points with improvement suggestions.\n\n"
