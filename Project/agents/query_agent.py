@@ -1,5 +1,5 @@
 # agents/query_adk.py
-from agents.adk_base import ADKAgent
+from agents.agent_base import ADKAgent
 
 query_agent = ADKAgent(
     role="Q&A Tutor",
