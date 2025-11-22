@@ -17,16 +17,18 @@ from agents.translator_agent import translate_text
 
 import concurrent.futures
 
-# ensure folders
+# Ensuring that required folders exist for saving downloads, transcripts, summaries, audio, etc.
 for folder in ["data", "data/downloads", "data/transcripts", "data/summaries", ".data/audio"]:
     os.makedirs(folder, exist_ok=True)
 
+# Streamlit page configuration
 st.set_page_config(page_title="YouTube Video Summarization System", page_icon="🤖", layout="wide")
 st.title("🧠 Multi-Agentic YouTube Video Summarization System Powered by Whisper and Google ADK")
 
+# Input: YouTube URL
 video_url = st.text_input("Enter a YouTube Video URL:", placeholder="https://www.youtube.com/watch?v=xxxx")
 
-
+# Selection of Translation/Transcription mode
 transcription_mode = st.selectbox(
     "Transcription / Translation mode",
     ("Translate to English (Whisper & fast)", "Auto (no Whisper)", "Translate to...")
@@ -41,9 +43,7 @@ if transcription_mode == "Translate to...":
     target_language = st.text_input("Output language (e.g., Hindi, French, Spanish):", value="Hindi").strip()
 
 
-# Summary Generation
-
-
+# Summary Generation Trigger
 if st.button("Generate Summary", type="primary"):
 
     if not video_url.strip():
@@ -80,12 +80,13 @@ if st.button("Generate Summary", type="primary"):
                     transcript = translate_text(transcript, target_language)
 
         else:
+            # If subtitles exist and user wants another language, translate them
             if transcription_mode == "Translate to...":
                 if target_language.lower() not in ("en", "english"):
                     st.info(f"Translating subtitles to {target_language}…")
                     transcript = translate_text(transcript, target_language)
 
-
+    # Chunking and grouping transcript into batches
     raw_chunks = chunk_text(transcript)
     batches = group_chunks(raw_chunks, batch_size=10)
     preview_chunks(batches)
@@ -106,7 +107,7 @@ if st.button("Generate Summary", type="primary"):
     with st.spinner("Creating final lecture-style summary…"):
         final_summary_text = summarize_final(combined_summary)
 
-
+    # Optional translation of final summary
     if transcription_mode == "Translate to...":
         if target_language.lower() not in ("en", "english"):
             with st.spinner(f"Translating final summary to {target_language}…"):
@@ -121,12 +122,12 @@ if st.button("Generate Summary", type="primary"):
 
     st.success("Summary Generated Successfully!")
 
-
+# Display final summary if available
 if "final_summary" in st.session_state:
     st.markdown(st.session_state["final_summary"])
     st.divider()
 
-
+# Follow-up Question Section
 st.subheader("💬 Ask Follow-up Questions")
 
 user_query = st.text_input("Ask something about the summarized notes:")
