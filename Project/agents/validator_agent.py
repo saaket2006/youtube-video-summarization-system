@@ -1,5 +1,5 @@
-# agents/validator_adk.py
-from agents.adk_base import ADKAgent
+# agents/validator_agent.py
+from agents.agent_base import ADKAgent
 
 validator = ADKAgent(
     role="Summary Validator",
