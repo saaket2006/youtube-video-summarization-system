@@ -1,4 +1,4 @@
-# agents/adk_base.py
+# agents/agent_base.py
 from typing import Optional
 from adk_adapter import ADKAdapter
 
