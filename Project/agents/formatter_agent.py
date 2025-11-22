@@ -1,6 +1,7 @@
 # agents/formatter_agent.py
 from agents.agent_base import ADKAgent
 
+# Creating a formatter agent responsible for cleaning raw transcript text
 formatter = ADKAgent(
     role="Transcript Formatter",
     goal="Clean and rewrite transcript text to be readable and grammatically correct.",
