@@ -4,6 +4,7 @@ import os
 import uuid
 
 def extract_video_id(url):
+    # Extracts a YouTube video ID from URL.
     if "v=" in url:
         return url.split("v=")[-1].split("&")[0]
     elif "youtu.be/" in url:
@@ -12,6 +13,12 @@ def extract_video_id(url):
 
 
 def load_youtube_transcript(video_id, lang=None):
+    """
+    Uses yt-dlp to fetch YouTube subtitles (manual + auto-generated).
+    Returns extracted plain text without timestamps or metadata.
+    If no subtitles found, returns None.
+    """
+    
     base = f"sub_{uuid.uuid4().hex}"
 
     cmd = [
@@ -27,8 +34,10 @@ def load_youtube_transcript(video_id, lang=None):
     if lang:
         cmd += ["--sub-lang", lang]
 
+    # Run yt-dlp silently
     subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
+    # Identify generated .vtt subtitle file
     generated_file = None
     for f in os.listdir("."):
         if f.startswith(base) and f.endswith(".vtt"):
@@ -38,6 +47,7 @@ def load_youtube_transcript(video_id, lang=None):
     if not generated_file:
         return None
 
+    # Extract readable lines from the VTT file
     lines = []
     with open(generated_file, "r", encoding="utf-8") as f:
         for line in f:
@@ -48,4 +58,5 @@ def load_youtube_transcript(video_id, lang=None):
     try: os.remove(generated_file)
     except: pass
 
+    # Return transcript as a single string
     return " ".join(lines)
