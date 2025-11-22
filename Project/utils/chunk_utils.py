@@ -18,13 +18,16 @@ def chunk_text(text: str, max_chars: int = 3000):
 
     chunks = []
     while len(text) > max_chars:
+        # Try splitting on a sentence-ending punctuation before max_chars
         split_index = max(
             text.rfind(".", 0, max_chars),
             text.rfind("?", 0, max_chars),
             text.rfind("!", 0, max_chars),
         )
+        # If no good punctuation found → hard split at max_chars
         if split_index == -1 or split_index < max_chars * 0.6:
             split_index = max_chars
+            
         chunks.append(text[:split_index].strip())
         text = text[split_index:].strip()
 
