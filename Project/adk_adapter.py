@@ -11,6 +11,7 @@ class ADKAdapter:
     def __init__(self, model: str = "gemini-2.0-flash"):
         self.model_name = model
 
+        # Fetch API key from environment variables (.env file)
         api_key = os.getenv("GOOGLE_API_KEY")
         if not api_key:
             raise ValueError("GOOGLE_API_KEY is missing. Add it to your .env file.")
