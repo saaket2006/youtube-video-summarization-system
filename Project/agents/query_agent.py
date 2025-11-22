@@ -1,4 +1,4 @@
-# agents/query_adk.py
+# agents/query_agent.py
 from agents.agent_base import ADKAgent
 
 query_agent = ADKAgent(
