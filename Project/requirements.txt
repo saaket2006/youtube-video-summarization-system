@@ -15,8 +15,8 @@ yt-dlp
 openai-whisper
 torch --index-url https://download.pytorch.org/whl/cpu
 # If using GPU
-torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu13
-torchaudio --index-url https://download.pytorch.org/whl/cu130
+# Directly enter this commaand in terminal: pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu130
+# You also need to have the appropriate CUDA version installed for your GPU.
 
 # Utilities
 requests
