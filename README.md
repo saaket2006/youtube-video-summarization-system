@@ -100,7 +100,7 @@ You can run this project either locally or through GitHub Codespaces.
 
 *Running Locally* :-    
 Clone the repository to your system or download the zip file into your system.    
-Install the appropriate ffmpeg version onto your system.
+Install the appropriate ffmpeg version onto your system.     
 Create and activate a Python virtual environment.    
 Install dependencies with "pip install -r requirements.txt". (Make sure to download the required CUDA version for PyTorch so that the overall speed could be very faster)   
 Add your required API keys and environment variables to the appropriate config file or ".env".    
