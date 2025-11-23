@@ -16,6 +16,12 @@ Project/data/downloads/
 Project/data/transcripts/
 Project/data/summaries/
 
+# Ignore Python cache files
+__pycache__/
+*/__pycache__/
+*.pyc
+*.pyo
+
 # Media files from pytube / yt-dlp
 *.mp3
 *.mp4
