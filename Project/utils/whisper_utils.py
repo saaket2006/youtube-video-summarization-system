@@ -63,9 +63,16 @@ def transcribe_audio(url: str, translate: bool = False, target_language: str = "
         raise RuntimeError("Audio download failed.")
 
     # Load Whisper model
+    # Load Whisper model
     model_size = model_size or os.getenv("WHISPER_MODEL", "base")
+
+    # Detect GPU
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = whisper.load_model(model_size, device=device)
+
+    # Load model and move it explicitly to GPU
+    model = whisper.load_model(model_size)
+    model = model.to(device)
+
 
     # Translation logic
     if translate and target_language.lower() in ("en", "english"):
