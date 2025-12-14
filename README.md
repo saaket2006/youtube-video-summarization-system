@@ -92,8 +92,8 @@ The project is organized into modular components, each handling a specific part 
 
 - README.md - Complete documentation for the entire project.
 
-🎯 Kaggle Project Requirements Covered
-✔ Multi-Agent System
+## 🎯 Kaggle Project Requirements Covered
+### ✔ Multi-Agent System
 
 The project is implemented as a multi-agent architecture with clearly separated responsibilities:
 
@@ -111,7 +111,7 @@ Q&A Agent
 
 Agents operate in both parallel (formatter + chunk summarization) and sequential stages, forming a coordinated multi-agent workflow.
 
-✔ Tools (Custom Tools)
+### ✔ Tools (Custom Tools)
 
 The system integrates several custom-built tools to support the agent workflow:
 
@@ -125,7 +125,7 @@ Translation utility using LLM APIs
 
 These tools are invoked by agents as part of the processing pipeline.
 
-✔ Memory / Session Management
+### ✔ Memory / Session Management
 
 Session-level memory is maintained using Streamlit’s session state:
 
@@ -135,7 +135,7 @@ Enables follow-up Q&A without re-running the pipeline
 
 This satisfies session & state management, though not long-term persistent memory.
 
-✔ Context Engineering
+### ✔ Context Engineering
 
 The project applies explicit context engineering techniques:
 
@@ -149,7 +149,7 @@ Aggregation into a compact final summary
 
 This enables handling long videos efficiently while staying within LLM context limits.
 
-✔ Agent Evaluation
+### ✔ Agent Evaluation
 
 A dedicated Validator agent evaluates the final summary:
 
@@ -160,6 +160,7 @@ Assesses coherence and completeness
 Acts as a quality review step before displaying output
 
 The validator performs evaluation only and does not modify the summary.
+
 
 ## Setup and Running Instructions
 
