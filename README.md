@@ -102,7 +102,8 @@ The project is implemented as a multi-agent architecture with clearly separated 
 - Final Summarizer Agent   
 - Translator Agent  
 - Validator (Evaluation) Agent  
-- Q&A Agent  
+- Q&A Agent
+
 Agents operate in both parallel (formatter + chunk summarization) and sequential stages, forming a coordinated multi-agent workflow.
 
 ### ✔ Tools (Custom Tools)
@@ -112,7 +113,8 @@ The system integrates several custom-built tools to support the agent workflow:
 - YouTube subtitle extraction utility  
 - Whisper-based speech-to-text transcription tool  
 - Text chunking and batching utility  
-- Translation utility using LLM APIs  
+- Translation utility using LLM APIs
+
 These tools are invoked by agents as part of the processing pipeline.  
 
 ### ✔ Memory / Session Management
@@ -120,6 +122,7 @@ These tools are invoked by agents as part of the processing pipeline.
 Session-level memory is maintained using Streamlit’s session state:
 - Generated summaries are stored per session  
 - Enables follow-up Q&A without re-running the pipeline  
+
 This satisfies session & state management, though not long-term persistent memory.
 
 ### ✔ Context Engineering
