@@ -97,67 +97,47 @@ The project is organized into modular components, each handling a specific part 
 
 The project is implemented as a multi-agent architecture with clearly separated responsibilities:
 
-Transcript Formatter Agent
-
-Chunk Summarizer Agent
-
-Final Summarizer Agent
-
-Translator Agent
-
-Validator (Evaluation) Agent
-
-Q&A Agent
-
+- Transcript Formatter Agent  
+- Chunk Summarizer Agent  
+- Final Summarizer Agent   
+- Translator Agent  
+- Validator (Evaluation) Agent  
+- Q&A Agent  
 Agents operate in both parallel (formatter + chunk summarization) and sequential stages, forming a coordinated multi-agent workflow.
 
 ### ✔ Tools (Custom Tools)
 
-The system integrates several custom-built tools to support the agent workflow:
+The system integrates several custom-built tools to support the agent workflow:  
 
-YouTube subtitle extraction utility
-
-Whisper-based speech-to-text transcription tool
-
-Text chunking and batching utility
-
-Translation utility using LLM APIs
-
-These tools are invoked by agents as part of the processing pipeline.
+- YouTube subtitle extraction utility  
+- Whisper-based speech-to-text transcription tool  
+- Text chunking and batching utility  
+- Translation utility using LLM APIs  
+These tools are invoked by agents as part of the processing pipeline.  
 
 ### ✔ Memory / Session Management
 
 Session-level memory is maintained using Streamlit’s session state:
-
-Generated summaries are stored per session
-
-Enables follow-up Q&A without re-running the pipeline
-
+- Generated summaries are stored per session  
+- Enables follow-up Q&A without re-running the pipeline  
 This satisfies session & state management, though not long-term persistent memory.
 
 ### ✔ Context Engineering
 
 The project applies explicit context engineering techniques:
-
-Chunking long transcripts
-
-Grouping chunks into batches
-
-Parallel summarization to reduce context size
-
-Aggregation into a compact final summary
+- Chunking long transcripts  
+- Grouping chunks into batches  
+- Parallel summarization to reduce context size  
+- Aggregation into a compact final summary  
 
 This enables handling long videos efficiently while staying within LLM context limits.
 
 ### ✔ Agent Evaluation
 
 A dedicated Validator agent evaluates the final summary:
-
-Checks structural correctness
-
-Assesses coherence and completeness
-
-Acts as a quality review step before displaying output
+- Checks structural correctness  
+- Assesses coherence and completeness  
+-  Acts as a quality review step before displaying output
 
 The validator performs evaluation only and does not modify the summary.
 
