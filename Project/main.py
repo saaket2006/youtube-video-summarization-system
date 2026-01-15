@@ -34,7 +34,7 @@ video_url = st.text_input("Enter a YouTube Video URL:", placeholder="https://www
 # Selection of Translation/Transcription mode
 transcription_mode = st.selectbox(
     "Transcription / Translation mode",
-    ("Translate to English (Whisper & fast)", "Auto (no Whisper)", "Translate to...")
+    ("Translate to English (Uses Whisper & fast)", "Auto (no Whisper)", "Translate to...")
 )   
 #Auto - Use available subtitles if present; otherwise, transcribe audio in original language.
 #Translate to English (Whisper fast) - Use available English subtitles if present; otherwise, use Whisper to transcribe and translate to English.
@@ -86,7 +86,7 @@ if st.button("Generate Summary", type="primary"):
                 transcript = transcribe_audio(video_url, translate=False)
 
             # B) Whisper direct English translate
-            elif transcription_mode == "Translate to English (Whisper & fast)":
+            elif transcription_mode == "Translate to English (Uses Whisper & fast)":
                 transcript = transcribe_audio(video_url, translate=True, target_language="en")
 
             # C) Multilingual: transcribe → ADK translate
