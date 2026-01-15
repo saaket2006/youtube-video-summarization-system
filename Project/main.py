@@ -61,30 +61,36 @@ if st.button("Generate Summary", type="primary"):
 
     video_id = extract_video_id(video_url)
 
+    # --------------------------------------------------
+    # Step 1: Try loading subtitles (NO spinner yet)
+    # --------------------------------------------------
+
+    subtitle_lang = "en" if transcription_mode == "Translate to English (Uses Whisper & fast)" else None
+    transcript = load_youtube_transcript(video_id, lang=subtitle_lang)
+
+    # --------------------------------------------------
+    # Step 2: Cloud guard BEFORE spinner
+    # --------------------------------------------------
+
+    if transcript is None and IS_STREAMLIT_CLOUD:
+        st.error(
+            "⚠️ This video does not have subtitles.\n\n"
+            "On the hosted demo, audio transcription is disabled due to "
+            "YouTube restrictions on cloud servers.\n\n"
+            "👉 Please try a video with subtitles, or run the project locally "
+            "to enable Whisper-based audio transcription."
+        )
+        st.stop()
+
+    # --------------------------------------------------
+    # Step 3: Actual work (spinner starts here)
+    # --------------------------------------------------
+
     with st.spinner("Fetching subtitles or transcribing audio…"):
 
-        # If user selected Whisper English translation, try English subtitles first
-        subtitle_lang = "en" if transcription_mode == "Translate to English (Uses Whisper & fast)" else None
-
-        transcript = load_youtube_transcript(video_id, lang=subtitle_lang)
-
-        # No subtitles → Whisper fallback
-
-        # No subtitles → Whisper fallback
+        # No subtitles → Whisper fallback (LOCAL ONLY)
         if transcript is None:
 
-            # --- CLOUD SAFETY GUARD ---
-            if IS_STREAMLIT_CLOUD:
-                st.error(
-                    "⚠️ This video does not have subtitles.\n\n"
-                    "On the hosted demo, audio transcription is disabled due to "
-                    "YouTube restrictions on cloud servers.\n\n"
-                    "👉 Please try a video with subtitles, or run the project locally "
-                    "to enable Whisper-based audio transcription."
-                )
-                st.stop()
-
-            # --- LOCAL WHISPER FALLBACK ---
             st.info("📜 Transcript not found → Using Whisper fallback.")
 
             # A) Auto: transcribe only
@@ -103,11 +109,12 @@ if st.button("Generate Summary", type="primary"):
                     transcript = translate_text(transcript, target_language)
 
         else:
-            # If subtitles exist and user wants another language, translate them
+            # Subtitles exist → optional translation
             if transcription_mode == "Translate to...":
                 if target_language.lower() not in ("en", "english"):
                     st.info(f"Translating subtitles to {target_language}…")
                     transcript = translate_text(transcript, target_language)
+
 
     # Chunking and grouping transcript into batches
     raw_chunks = chunk_text(transcript)

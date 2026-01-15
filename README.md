@@ -180,4 +180,4 @@ This project holds significant value by enabling users to consume educational an
 
 
 ### ⚠️ Note:
-For videos without subtitles, Whisper-based audio transcription works reliably in local environments. Due to YouTube restrictions on cloud servers, audio download may fail on hosted demos.
+For videos without subtitles, Whisper-based audio transcription works reliably in local environments. Due to YouTube restrictions on cloud servers, audio download may fail on hosted demos. Videos with subtitles work normally. For full functionality, run the project locally.
