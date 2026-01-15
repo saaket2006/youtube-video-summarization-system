@@ -177,3 +177,7 @@ The AI-Based YouTube Summarization System demonstrates how a structured multi-ag
 ## Value Statement   
 
 This project holds significant value by enabling users to consume educational and technical YouTube content more efficiently and effortlessly. By reducing hours of video content into structured summaries within seconds, the system enhances productivity, accessibility, and knowledge retention. The multilingual capability broadens inclusivity, while the ADK-driven agent pipeline ensures reliability and modular extensibility. Whether used for academic research, note-taking, content analysis, or rapid learning, the system delivers tangible benefits by saving time, improving comprehension, and enabling deeper engagement with complex material.
+
+
+### ⚠️ Note:
+For videos without subtitles, Whisper-based audio transcription works reliably in local environments. Due to YouTube restrictions on cloud servers, audio download may fail on hosted demos.
