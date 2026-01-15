@@ -17,6 +17,9 @@ from agents.translator_agent import translate_text
 
 import concurrent.futures
 
+# Detect if running on Streamlit Community Cloud
+IS_STREAMLIT_CLOUD = bool(os.getenv("STREAMLIT_RUNTIME_ENV"))
+
 # Ensuring that required folders exist for saving downloads, transcripts, summaries, audio, etc.
 for folder in ["data", "data/downloads", "data/transcripts", "data/summaries", ".data/audio"]:
     os.makedirs(folder, exist_ok=True)
@@ -61,15 +64,29 @@ if st.button("Generate Summary", type="primary"):
 
         # No subtitles → Whisper fallback
 
+        # No subtitles → Whisper fallback
         if transcript is None:
+
+            # --- CLOUD SAFETY GUARD ---
+            if IS_STREAMLIT_CLOUD:
+                st.error(
+                    "⚠️ This video does not have subtitles.\n\n"
+                    "On the hosted demo, audio transcription is disabled due to "
+                    "YouTube restrictions on cloud servers.\n\n"
+                    "👉 Please try a video with subtitles, or run the project locally "
+                    "to enable Whisper-based audio transcription."
+                )
+                st.stop()
+
+            # --- LOCAL WHISPER FALLBACK ---
             st.info("📜 Transcript not found → Using Whisper fallback.")
 
             # A) Auto: transcribe only
-            if transcription_mode == "Auto (no translate)":
+            if transcription_mode == "Auto (no Whisper)":
                 transcript = transcribe_audio(video_url, translate=False)
 
             # B) Whisper direct English translate
-            elif transcription_mode == "Translate to English (Whisper fast)":
+            elif transcription_mode == "Translate to English (Whisper & fast)":
                 transcript = transcribe_audio(video_url, translate=True, target_language="en")
 
             # C) Multilingual: transcribe → ADK translate
