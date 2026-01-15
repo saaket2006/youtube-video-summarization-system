@@ -18,7 +18,13 @@ from agents.translator_agent import translate_text
 import concurrent.futures
 
 # Detect if running on Streamlit Community Cloud
-IS_STREAMLIT_CLOUD = bool(os.getenv("STREAMLIT_RUNTIME_ENV"))
+IS_STREAMLIT_CLOUD = (
+    os.getenv("STREAMLIT_SHARING") == "true"
+    or os.getenv("STREAMLIT_SERVER_RUNNING") == "true"
+    or os.getenv("STREAMLIT_CLOUD") == "true"
+    or "streamlit" in os.getenv("HOSTNAME", "").lower()
+)
+
 
 # Ensuring that required folders exist for saving downloads, transcripts, summaries, audio, etc.
 for folder in ["data", "data/downloads", "data/transcripts", "data/summaries", ".data/audio"]:
@@ -58,7 +64,7 @@ if st.button("Generate Summary", type="primary"):
     with st.spinner("Fetching subtitles or transcribing audio…"):
 
         # If user selected Whisper English translation, try English subtitles first
-        subtitle_lang = "en" if transcription_mode == "Translate to English (Whisper fast)" else None
+        subtitle_lang = "en" if transcription_mode == "Translate to English (Uses Whisper & fast)" else None
 
         transcript = load_youtube_transcript(video_id, lang=subtitle_lang)
 
