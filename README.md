@@ -147,7 +147,7 @@ The validator performs evaluation only and does not modify the summary.
 
 ## Setup and Running Instructions
 
-You can run this project either locally or through GitHub Codespaces.    
+You can run this project either locally or through GitHub Codespaces (Whisper ASR is faster locally than in Codespaces).    
 
 *Running Locally* :-    
 Clone the repository to your system or download the zip file into your system.    
