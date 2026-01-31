@@ -17,7 +17,7 @@ The AI-Based YouTube Summarization System addresses this challenge by leveraging
 
 The architecture is composed of multiple agents and utility layers that work together in a clean, modular pipeline:
 <div align="center">
-   <img width="4158" height="3685" alt="Architecture" src="https://github.com/user-attachments/assets/a9ee655b-b29f-4090-b735-d7fe2df2c8f7" />
+   <img width="1000" alt="Architecture" src="https://github.com/user-attachments/assets/a9ee655b-b29f-4090-b735-d7fe2df2c8f7" />
 </div>
 <br>
 
@@ -47,7 +47,7 @@ batch_chunks: Organizes these segments into manageable batches for parallel proc
 
 The workflow describes how the system processes user input from start to end:
 <div align="center">
-   <img width="539" height="1352" alt="Methodology" src="https://github.com/user-attachments/assets/74758f42-62d6-4d28-b191-2e13b63f7608" />
+   <img width="600" alt="Methodology" src="https://github.com/user-attachments/assets/74758f42-62d6-4d28-b191-2e13b63f7608" />
 </div>
 <br>
 
