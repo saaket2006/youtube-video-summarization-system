@@ -1,4 +1,4 @@
-# 🎥 Multi-Agentic YouTube Video Summarization System Powered by Whisper and Google ADK
+# 🎥 Multi-Agent YouTube Video Summarization System Powered by Whisper and Google ADK
 
 This project is an AI-powered end-to-end system designed to automatically generate structured, clean, and academically styled summaries of YouTube videos. Using a multi-agent pipeline developed with Google’s AI Development Kit (ADK), the system orchestrates transcript extraction, audio transcription, chunking, agent collaboration, translation, and validation to produce high-quality summaries suitable for research and learning. Users simply provide a YouTube URL and an optional translation preference, and the ADK-driven agent workflow handles the complete lifecycle, including post-summary Q&A based on the final output.
 
