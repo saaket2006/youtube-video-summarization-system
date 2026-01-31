@@ -50,7 +50,7 @@ The workflow describes how the system processes user input from start to end:
 <p align="center">
   <img src="https://github.com/user-attachments/assets/74758f42-62d6-4d28-b191-2e13b63f7608"
        alt="Workflow Diagram"
-       style="max-width: 500px; width: 90%; height: auto;" />
+       style="max-width: 500px; width: 50%; height: auto;" />
 </p>
 <br>
 
