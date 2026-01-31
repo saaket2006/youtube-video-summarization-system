@@ -1,6 +1,6 @@
 # 🎥 Multi-Agent YouTube Video Summarization System Powered by Whisper and Google ADK
 
-This project is an AI-powered end-to-end system designed to automatically generate structured, clean, and academically styled summaries of YouTube videos. Using a multi-agent pipeline developed with Google’s AI Development Kit (ADK), the system orchestrates transcript extraction, audio transcription, chunking, agent collaboration, translation, and validation to produce high-quality summaries suitable for research and learning. Users simply provide a YouTube URL and an optional translation preference, and the ADK-driven agent workflow handles the complete lifecycle, including post-summary Q&A based on the final output.
+This project is an AI-powered end-to-end system designed to automatically generate structured, clean, and academically styled summaries of YouTube videos. Using a multi-agent pipeline developed with Google’s AI Development Kit (ADK), the system orchestrates transcript extraction, audio transcription, chunking, agent-based task decomposition, translation, and validation to produce high-quality summaries suitable for research and learning. Users simply provide a YouTube URL and an optional translation preference, and the ADK-driven agent workflow handles the complete lifecycle, including post-summary Q&A based on the final output.
 
 
 ## Problem Statement
@@ -10,7 +10,7 @@ YouTube offers a vast collection of educational and technical content, but a sig
 
 ## Solution Statement
 
-The AI-Based YouTube Summarization System addresses this challenge by leveraging Google ADK to build an intelligent multi-agent workflow that transforms YouTube videos into high-quality summaries. The system retrieves or transcribes the video, cleans and chunks the text, and uses ADK-powered formatter and summarizer agents running in parallel to process the content efficiently. The outputs are merged by a final summarizer agent, and optional translation is provided through an additional ADK agent. A validator agent ensures correctness, structure, and readability, while a Q&A agent allows users to interact with the summarized material. This tightly orchestrated ADK workflow removes the burden of manual summarization and provides multilingual, academically structured results within seconds.
+The AI-Based YouTube Summarization System addresses this challenge by leveraging Google ADK to build a structured multi-agent workflow that transforms YouTube videos into high-quality summaries. The system retrieves or transcribes the video, cleans and chunks the text, and uses ADK-powered formatter and summarizer agents running in parallel to process the content efficiently. The outputs are merged by a final summarizer agent, and optional translation is provided through an additional ADK agent. A validator agent ensures correctness, structure, and readability, while a Q&A agent allows users to interact with the summarized material. This tightly orchestrated ADK workflow removes the burden of manual summarization and provides multilingual, academically structured results within seconds.
 
 
 ## Architecture
@@ -137,10 +137,10 @@ This enables handling long videos efficiently while staying within LLM context l
 
 ### ✔ Agent Evaluation
 
-A dedicated Validator agent evaluates the final summary:
+A Validator agent perform post-generation quality assessment where it:
 - Checks structural correctness  
 - Assesses coherence and completeness  
--  Acts as a quality review step before displaying output
+- Acts as a quality review step before displaying output
 
 The validator performs evaluation only and does not modify the summary.
 
