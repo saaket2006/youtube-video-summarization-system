@@ -2,7 +2,7 @@
 
 # Environment files
 .env
-.env.*
+
 
 # Virtual environments
 venv/
