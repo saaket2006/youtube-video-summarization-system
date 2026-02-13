@@ -8,20 +8,10 @@ This project is an AI-powered end-to-end system designed to automatically genera
 YouTube offers a vast collection of educational and technical content, but a significant portion of it is long, unstructured, and difficult to process efficiently. Many videos lack accurate transcripts, making it even harder for students, researchers, and multilingual audiences to extract meaningful insights. Manually summarizing videos requires substantial effort, is inconsistent, and is not scalable when working with large volumes of content. These limitations create a clear need for an automated, reliable, and structured summarization mechanism.
 
 
-## Solution Statement
-
-The AI-Based YouTube Summarization System addresses this challenge by leveraging Google ADK to build a structured multi-agent workflow that transforms YouTube videos into high-quality summaries. The system retrieves or transcribes the video, cleans and chunks the text, and uses ADK-powered formatter and summarizer agents running in parallel to process the content efficiently. The outputs are merged by a final summarizer agent, and optional translation is provided through an additional ADK agent. A validator agent ensures correctness, structure, and readability, while a Q&A agent allows users to interact with the summarized material. This tightly orchestrated ADK workflow removes the burden of manual summarization and provides multilingual, academically structured results within seconds.
-
 
 ## Architecture
 
 The architecture is composed of multiple agents and utility layers that work together in a clean, modular pipeline:
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/a9ee655b-b29f-4090-b735-d7fe2df2c8f7"
-       alt="Architecture Diagram"
-       style="max-width: 700px; width: 80%; height: auto;" />
-</p>
-<br>
 
 *Transcript Retrieval Layer* -  
 transcript_utils: Loads official YouTube transcripts when available.  
@@ -47,12 +37,6 @@ batch_chunks: Organizes these segments into manageable batches for parallel proc
 ## Workflow
 
 The workflow describes how the system processes user input from start to end:
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/74758f42-62d6-4d28-b191-2e13b63f7608"
-       alt="Workflow Diagram"
-       style="max-width: 500px; width: 50%; height: auto;" />
-</p>
-<br>
 
 Step 1: User provides YouTube URL and selects translation mode.    
 Step 2: System extracts video ID and attempts transcript retrieval.    
@@ -69,7 +53,7 @@ Step 11: Q&A Agent responds to user queries using the summary as context.
 
 ## Project Structure   
 
-The project is organized into modular components, each handling a specific part of the YouTube summarization workflow. The structure is as follows:
+The project is organized into modular components, each handling a specific part of the YouTube summarization workflow. The structure is as follows:    
 
 - main.py
    - Main Streamlit application that connects the user interface with the ADK-based multi-agent pipeline.
@@ -88,8 +72,7 @@ The project is organized into modular components, each handling a specific part 
    - whisper_utils.py – Performs Whisper-based audio transcription if needed.
    - chunk_utils.py – Splits the full transcript into smaller batches.
 
-- config/
-   - .env - Stores sensitive keys and environment configuration (not committed to Git).
+- .env - Stores sensitive keys and environment configuration (not committed to Git).
 
 - requirements.txt - Dependency list for all required Python packages.
 
@@ -101,26 +84,30 @@ While the system is implemented using multiple specialized agents, the execution
 
 ## Setup and Running Instructions
 
-You can run this project either locally or through GitHub Codespaces (Whisper ASR is faster locally than in Codespaces).    
+You can run this project either locally (make sure you have ffmpeg installed) or through GitHub Codespaces (Whisper ASR is faster locally than in Codespaces).    
 
-*Running Locally* :-    
-Clone the repository to your system or download the zip file into your system.    
-Install the appropriate ffmpeg version onto your system.     
-Create and activate a Python virtual environment.    
-Install dependencies with "pip install -r requirements.txt". (Make sure to download the required CUDA version for PyTorch so that the overall speed could be very faster)   
-Add your required API keys and environment variables to the appropriate config file or ".env".    
-Launch the application using "streamlit run main.py".    
-Open the displayed local URL to access the interface.    
-
-*Running on GitHub Codespaces* :-    
-Open the repository inside GitHub Codespaces.    
-Allow the environment to initialize the dev container.    
-Install dependencies by running "pip install -r requirements.txt".    
-Ensure that API keys are added to the Codespaces environment variables and also ensure the ffmpeg is also downloaded manually.    
-Start the application using "streamlit run main.py".    
-Access the forwarded public URL automatically generated by Codespaces to use the application.
-
-
+1. Clone the repository
+```
+git clone https://github.com/saaket2006/youtube-video-summarization-system.git
+```
+2. Create a virtual environment and switch to it
+```
+python -m venv venv
+venv\Scripts\activate
+```
+3. Install the dependencies
+```
+pip install -r Project/requirements.txt
+```
+3. Run the main file
+```
+streamlit run Project/amin.py
+```
+4. Reconfigure PyTorch (optional) - If PyTorch isn't working, use the following commands (according to your GPU's CUDA version)
+```
+pip uninstall -y torch torchvision torchaudio
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu130
+```
 
 ## Conclusion    
 
@@ -134,4 +121,4 @@ This project holds significant value by enabling users to consume educational an
 
 
 ### ⚠️ Note:
-For videos without subtitles, Whisper-based audio transcription works reliably in local environments. Due to YouTube restrictions on cloud servers, audio download may fail on hosted demos. Videos with subtitles work normally. For full functionality, run the project locally.
+For videos without subtitles, Whisper-based audio transcription works reliably in local environments. Due to YouTube restrictions on cloud servers, audio download may fail on hosted demos. Videos with subtitles may work normally. For full functionality, run the project locally.
