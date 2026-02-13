@@ -99,11 +99,15 @@ venv\Scripts\activate
 ```
 pip install -r Project/requirements.txt
 ```
-3. Run the main file
+3. Create a *.env* file to store your Gemini API Key
+```
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+5. Run the main file
 ```
 streamlit run Project/amin.py
 ```
-4. Reconfigure PyTorch (optional) - If PyTorch isn't working, use the following commands (according to your GPU's CUDA version)
+5. Reconfigure PyTorch (optional) - If PyTorch isn't working, use the following commands (according to your GPU's CUDA version)
 ```
 pip uninstall -y torch torchvision torchaudio
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu130
