@@ -6,7 +6,7 @@ formatter = ADKAgent(
     role="Transcript Formatter",
     goal="Clean and rewrite transcript text to be readable and grammatically correct.",
     backstory="A linguistic expert specializing in simplifying and polishing language.",
-    model="gemini-2.0-flash",
+    # model="qwen2.5:7b", # Uses default from agent_base
     temperature=0.25
 )
 

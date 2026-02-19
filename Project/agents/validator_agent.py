@@ -6,7 +6,7 @@ validator = ADKAgent(
     role="Summary Validator",
     goal="Check if lecture notes are clear, complete and structured.",
     backstory="Careful academic reviewer.",
-    model="gemini-2.5-flash",
+    # model="qwen2.5:7b",
     temperature=0.25
 )
 

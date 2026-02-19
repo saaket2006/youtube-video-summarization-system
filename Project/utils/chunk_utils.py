@@ -1,7 +1,7 @@
 import re
 
 
-def chunk_text(text: str, max_chars: int = 3000):
+def chunk_text(text: str, max_chars: int = 12000):
     """
     Splits a long transcript into moderately large chunks for faster
     summarization while respecting sentence boundaries.
@@ -54,10 +54,3 @@ def group_chunks(chunks, batch_size=10):
         " ".join(chunks[i : i + batch_size])
         for i in range(0, len(chunks), batch_size)
     ]
-
-
-def preview_chunks(chunks, limit=2):
-    """Quick preview for debugging chunking behavior."""
-    print(f"\n🧩 Created {len(chunks)} chunks. Showing first {limit}:\n")
-    for i, c in enumerate(chunks[:limit], 1):
-        print(f"--- Chunk {i} ---\n{c[:300]}...\n")

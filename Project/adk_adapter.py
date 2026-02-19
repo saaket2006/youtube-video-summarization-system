@@ -1,35 +1,40 @@
-# adk_adapter.py
-import os
-import google.generativeai as genai
+import ollama
+import logging
+
+# Configure logging if not already configured
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 class ADKAdapter:
     """
-    Clean adapter using ONLY Google Gemini API.
-    No litellm. No Vertex AI. No ADC required.
+    Clean adapter using ONLY Ollama (local LLM).
+    No external API keys required.
     """
 
-    def __init__(self, model: str = "gemini-2.0-flash"):
+    def __init__(self, model: str = "qwen2.5:7b"):
         self.model_name = model
+        # No API key needed for Ollama
 
-        # Fetch API key from environment variables (.env file)
-        api_key = os.getenv("GOOGLE_API_KEY")
-        if not api_key:
-            raise ValueError("GOOGLE_API_KEY is missing. Add it to your .env file.")
+    def complete(self, prompt: str, temperature: float = 0.7, max_tokens: int = 1024):
+        """Generate text using Ollama."""
+        # logger.info(f"Generating with model: {self.model_name}")
+        logger.debug(f"Prompt: {prompt[:500]}..." if len(prompt) > 500 else f"Prompt: {prompt}")
 
-        # configure Gemini API
-        genai.configure(api_key=api_key)
-
-        # initialize model
-        self.model = genai.GenerativeModel(model)
-
-    def complete(self, prompt: str, temperature: float = 0.2, max_tokens: int = 1024):
-        """Generate text using Gemini."""
-        response = self.model.generate_content(
-            prompt,
-            generation_config={
-                "temperature": temperature,
-                "max_output_tokens": max_tokens
-            }
-        )
-
-        return response.text
+        try:
+            response = ollama.chat(model=self.model_name, messages=[
+                {
+                    'role': 'user',
+                    'content': prompt,
+                },
+            ], options={
+                'temperature': temperature,
+                'num_predict': max_tokens
+            })
+            
+            content = response['message']['content']
+            logger.debug(f"Response: {content[:500]}..." if len(content) > 500 else f"Response: {content}")
+            return content
+            
+        except Exception as e:
+            logger.error(f"Error generating response: {e}")
+            raise e

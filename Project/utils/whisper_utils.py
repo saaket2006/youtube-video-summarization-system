@@ -26,7 +26,7 @@ def transcribe_audio(url: str, translate: bool = False, target_language: str = "
     Supports:
       - transcription only
       - Whisper → English translation
-      - Whisper transcription → Gemini translation (multilingual)
+      - Whisper transcription → Translation (multilingual)
     """
 
     #  Directory to store temporary audio files

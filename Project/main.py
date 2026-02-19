@@ -2,14 +2,14 @@
 import streamlit as st
 import os
 from pathlib import Path
-from utils.chunk_utils import chunk_text, preview_chunks, group_chunks
+from utils.chunk_utils import chunk_text, group_chunks
 from utils.transcript_utils import extract_video_id, load_youtube_transcript
 from utils.whisper_utils import transcribe_audio
 from dotenv import load_dotenv
 load_dotenv()
 
 # agents
-from agents.formatter_agent import format_text
+# from agents.formatter_agent import format_text
 from agents.summarizer_agent import summarize_chunk, summarize_final
 from agents.validator_agent import validate_summary_text
 from agents.query_agent import answer_from_notes
@@ -32,7 +32,7 @@ for folder in ["data", "data/downloads", "data/transcripts", "data/summaries", "
 
 # Streamlit page configuration
 st.set_page_config(page_title="YouTube Video Summarization System", page_icon="🤖", layout="wide")
-st.title("🧠 Multi-Agentic YouTube Video Summarization System Powered by Whisper and Google ADK")
+st.title("🧠 Multi-Agentic YouTube Video Summarization System Powered by Whisper and Ollama")
 
 # Input: YouTube URL
 video_url = st.text_input("Enter a YouTube Video URL:", placeholder="https://www.youtube.com/watch?v=xxxx")
@@ -119,15 +119,17 @@ if st.button("Generate Summary", type="primary"):
     # Chunking and grouping transcript into batches
     raw_chunks = chunk_text(transcript)
     batches = group_chunks(raw_chunks, batch_size=10)
-    preview_chunks(batches)
 
-    #1. FORMAT each batch in parallel
-    with st.spinner("Formatting text…"):
-        with concurrent.futures.ThreadPoolExecutor(max_workers=6) as ex:
-            formatted_batches = list(ex.map(format_text, batches))
+    #1. FORMAT each batch in parallel (SKIPPED for speed optimization)
+    # with st.spinner("Formatting text…"):
+    #     with concurrent.futures.ThreadPoolExecutor(max_workers=6) as ex:
+    #         formatted_batches = list(ex.map(format_text, batches))
+    
+    # Direct pass to summarizer
+    formatted_batches = batches
 
     #2. CHUNK SUMMARIES in parallel
-    with st.spinner("Summarizing chunks…"):
+    with st.spinner("Summarizing chunks (Detailed Notes)…"):
         with concurrent.futures.ThreadPoolExecutor(max_workers=6) as ex:
             chunk_summaries = list(ex.map(summarize_chunk, formatted_batches))
 
@@ -160,14 +162,34 @@ if "final_summary" in st.session_state:
 # Follow-up Question Section
 st.subheader("💬 Ask Follow-up Questions")
 
-user_query = st.text_input("Ask something about the summarized notes:")
+# Initialize session state for Q&A history
+if "qa_history" not in st.session_state:
+    st.session_state["qa_history"] = []
 
-if st.button("Ask"):
+# Display history
+for i, (q, a) in enumerate(st.session_state["qa_history"]):
+    with st.chat_message("user"):
+        st.write(q)
+    with st.chat_message("assistant"):
+        st.write(a)
+
+# Form for user input (Movable, not pinned to bottom)
+with st.form(key="qa_form"):
+    user_query = st.text_input("Ask something about the summarized notes:")
+    submit_button = st.form_submit_button("Ask")
+
+if submit_button and user_query:
     if "final_summary" not in st.session_state:
         st.error("Please generate a summary first.")
-        st.stop()
+    else:
+        # Display user message immediately
+        with st.chat_message("user"):
+            st.write(user_query)
 
-    with st.spinner("Thinking…"):
-        answer = answer_from_notes(st.session_state["final_summary"], user_query)
-
-    st.write(answer)
+        with st.chat_message("assistant"):
+            with st.spinner("Thinking…"):
+                answer = answer_from_notes(st.session_state["final_summary"], user_query)
+                st.write(answer)
+        
+        # Save to history
+        st.session_state["qa_history"].append((user_query, answer))

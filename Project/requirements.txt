@@ -4,7 +4,7 @@ google-adk
 
 # LLM + API
 openai
-google-generativeai
+ollama
 
 # YouTube transcript & download
 youtube-transcript-api==0.6.2

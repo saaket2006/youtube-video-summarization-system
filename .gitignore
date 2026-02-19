@@ -1,5 +1,5 @@
 # --- Project Specific ---
-
+**/tests/*.py
 # Environment files
 .env
 
