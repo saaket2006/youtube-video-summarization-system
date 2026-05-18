@@ -28,7 +28,7 @@ chunk_utils: Splits long transcripts into large, context-rich batches (optimized
 *Q&A Agent* - Allows users to ask follow-up questions with session history.
 
 ## Key Features
-- **Local LLM Powered**: Uses Ollama (`qwen2.5:7b`) for zero-cost, private inference.
+- **Local LLM Powered**: Uses Ollama (`qwen2.5:3b`) for zero-cost, private inference.
 - **High-Density Summaries**: Optimized prompts ensuring comprehensive coverage of every technical point.
 - **Speed Optimized**: Smart chunking (12k chars) and removed redundant steps for fast generation (approx 80-90s for 20min video).
 - **Q&A with History**: Chat-like interface to ask follow-up questions, with history persisted for the session.
@@ -104,7 +104,7 @@ pip install -r Project/requirements.txt
    - Download and install [Ollama](https://ollama.com/).
    - Pull the default model:
      ```
-     ollama pull qwen2.5:7b
+     ollama pull qwen2.5:3b
      ```
    - Ensure Ollama is running in the background.
 

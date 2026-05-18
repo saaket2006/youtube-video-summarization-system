@@ -15,7 +15,7 @@ class ADKAgent:
     """
     
     def __init__(self, role: str, goal: str, backstory: str = "", model: str = None, temperature: float = 0.25):
-        model = model or "qwen2.5:7b"
+        model = model or "qwen2.5:3b"
         self.client = ADKAdapter(model=model)
         self.role = role
         self.goal = goal

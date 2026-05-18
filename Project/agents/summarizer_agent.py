@@ -6,7 +6,7 @@ chunk_summarizer = ADKAgent(
     role="Chunk Summarizer",
     goal="Summarize transcript chunks into short structured notes.",
     backstory="Efficient concise summaries capturing key ideas.",
-    # model="qwen2.5:7b",
+    # model="qwen2.5:3b",
     temperature=0.3
 )
 
@@ -15,7 +15,7 @@ final_summarizer = ADKAgent(
     role="Final Summarizer",
     goal="Combine all chunk summaries into lecture-style notes in Markdown.",
     backstory="Professor-level writer for high-quality study notes.",
-    # model="qwen2.5:7b",
+    # model="qwen2.5:3b",
     temperature=0.35    # Slightly higher creativity
 )
 

@@ -11,6 +11,7 @@ ENV/
 env/
 
 # Project data folders
+.data
 Project/data/
 Project/data/downloads/
 Project/data/transcripts/

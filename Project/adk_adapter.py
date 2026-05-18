@@ -11,7 +11,7 @@ class ADKAdapter:
     No external API keys required.
     """
 
-    def __init__(self, model: str = "qwen2.5:7b"):
+    def __init__(self, model: str = "qwen2.5:3b"):
         self.model_name = model
         # No API key needed for Ollama
 

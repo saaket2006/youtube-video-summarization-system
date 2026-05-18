@@ -6,7 +6,7 @@ query_agent = ADKAgent(
     role="Q&A Tutor",
     goal="Answer follow-up questions based on final notes.",
     backstory="Friendly study assistant who explains clearly.",
-    # model="qwen2.5:7b",
+    # model="qwen2.5:3b",
     temperature=0.3    # Slight creativity
 )
 
